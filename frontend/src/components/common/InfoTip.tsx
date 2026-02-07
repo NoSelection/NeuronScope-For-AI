@@ -37,11 +37,13 @@ export function InfoTip({ topic, children, iconOnly }: InfoTipProps) {
   return (
     <span className="inline-flex items-center gap-1.5" ref={ref}>
       {!iconOnly && children}
-      <button
-        type="button"
+      <span
+        role="button"
+        tabIndex={0}
         onClick={() => setOpen(!open)}
         onMouseEnter={() => setOpen(true)}
-        className="relative inline-flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full border border-zinc-600 text-[10px] font-bold leading-none text-zinc-500 transition-colors hover:border-blue-500 hover:text-blue-400"
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setOpen(!open); } }}
+        className="relative inline-flex h-4 w-4 flex-shrink-0 cursor-pointer items-center justify-center rounded-full border border-zinc-600 text-[10px] font-bold leading-none text-zinc-500 transition-colors hover:border-blue-500 hover:text-blue-400"
         aria-label={`Learn about ${topic.replace(/_/g, ' ')}`}
       >
         ?
@@ -58,16 +60,18 @@ export function InfoTip({ topic, children, iconOnly }: InfoTipProps) {
             </p>
 
             {!expanded ? (
-              <button
-                type="button"
+              <span
+                role="button"
+                tabIndex={0}
                 onClick={(e) => {
                   e.stopPropagation();
                   setExpanded(true);
                 }}
-                className="mt-2 text-[11px] font-medium text-blue-400 hover:text-blue-300"
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpanded(true); } }}
+                className="mt-2 block cursor-pointer text-[11px] font-medium text-blue-400 hover:text-blue-300"
               >
                 Tell me more...
-              </button>
+              </span>
             ) : (
               <div className="mt-2 space-y-2">
                 <p className="text-[11px] leading-relaxed text-zinc-300">
@@ -82,7 +86,7 @@ export function InfoTip({ topic, children, iconOnly }: InfoTipProps) {
             )}
           </div>
         )}
-      </button>
+      </span>
     </span>
   );
 }
