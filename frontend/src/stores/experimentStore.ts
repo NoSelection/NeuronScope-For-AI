@@ -4,6 +4,7 @@ import type {
   ExperimentResult,
   ExperimentSummary,
   InterventionSpec,
+  Insight,
   ComponentType,
   InterventionType,
 } from '../api/types';
@@ -39,6 +40,7 @@ interface ExperimentState {
   config: ExperimentConfig;
   currentResult: ExperimentResult | null;
   sweepResults: ExperimentResult[];
+  insights: Insight[];
   history: ExperimentSummary[];
   running: boolean;
   error: string | null;
@@ -58,6 +60,7 @@ export const useExperimentStore = create<ExperimentState>((set, get) => ({
   config: defaultConfig(),
   currentResult: null,
   sweepResults: [],
+  insights: [],
   history: [],
   running: false,
   error: null,
@@ -96,10 +99,10 @@ export const useExperimentStore = create<ExperimentState>((set, get) => ({
 
   runExperiment: async () => {
     const { config } = get();
-    set({ running: true, error: null });
+    set({ running: true, error: null, insights: [] });
     try {
-      const result = await api.runExperiment(config);
-      set({ currentResult: result, running: false });
+      const { result, insights } = await api.runExperiment(config);
+      set({ currentResult: result, insights, running: false });
     } catch (e) {
       set({ running: false, error: (e as Error).message });
     }
@@ -107,10 +110,10 @@ export const useExperimentStore = create<ExperimentState>((set, get) => ({
 
   runSweep: async (layers) => {
     const { config } = get();
-    set({ running: true, error: null, sweepResults: [] });
+    set({ running: true, error: null, sweepResults: [], insights: [] });
     try {
-      const results = await api.runSweep(config, layers);
-      set({ sweepResults: results, running: false });
+      const { results, insights } = await api.runSweep(config, layers);
+      set({ sweepResults: results, insights, running: false });
     } catch (e) {
       set({ running: false, error: (e as Error).message });
     }
@@ -128,7 +131,7 @@ export const useExperimentStore = create<ExperimentState>((set, get) => ({
   selectResult: async (id) => {
     try {
       const result = await api.getExperiment(id);
-      set({ currentResult: result });
+      set({ currentResult: result, insights: [] });
     } catch (e) {
       set({ error: (e as Error).message });
     }

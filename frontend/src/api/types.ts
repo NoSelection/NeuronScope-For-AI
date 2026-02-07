@@ -143,3 +143,9 @@ export const INTERVENTION_LABELS: Record<InterventionType, string> = {
   patch: 'Activation Patching',
   additive: 'Additive Perturbation',
 };
+
+export interface Insight {
+  type: 'critical' | 'notable' | 'info';
+  title: string;
+  detail: string;
+}

@@ -11,6 +11,7 @@ from neuronscope.experiments.runner import ExperimentRunner
 from neuronscope.hooks.manager import HookManager
 from neuronscope.models.registry import ModelRegistry
 from neuronscope.store.experiment_store import ExperimentStore
+from neuronscope.analysis.insights import generate_insights, generate_sweep_insights
 
 router = APIRouter()
 store = ExperimentStore()
@@ -31,7 +32,7 @@ def _get_runner() -> ExperimentRunner:
 
 
 @router.post("/run")
-async def run_experiment(config: ExperimentConfig) -> ExperimentResult:
+async def run_experiment(config: ExperimentConfig) -> dict:
     """Run a complete experiment (clean + intervention + comparison)."""
     runner = _get_runner()
 
@@ -39,11 +40,12 @@ async def run_experiment(config: ExperimentConfig) -> ExperimentResult:
     result = await loop.run_in_executor(None, partial(runner.run, config))
 
     await store.save(result)
-    return result
+    insights = generate_insights(result)
+    return {"result": result, "insights": insights}
 
 
 @router.post("/sweep")
-async def run_sweep(request: SweepRequest) -> list[ExperimentResult]:
+async def run_sweep(request: SweepRequest) -> dict:
     """Run the same intervention across multiple layers."""
     runner = _get_runner()
 
@@ -53,7 +55,8 @@ async def run_sweep(request: SweepRequest) -> list[ExperimentResult]:
     )
 
     await store.save_many(results)
-    return results
+    insights = generate_sweep_insights(results)
+    return {"results": results, "insights": insights}
 
 
 @router.get("/")

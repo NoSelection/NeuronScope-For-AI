@@ -5,6 +5,7 @@ import type {
   ExperimentSummary,
   CaptureResult,
   TokenInfo,
+  Insight,
 } from './types';
 
 const BASE = '/api';
@@ -62,7 +63,7 @@ export async function tokenize(text: string): Promise<TokenInfo[]> {
 
 export async function runExperiment(
   config: ExperimentConfig,
-): Promise<ExperimentResult> {
+): Promise<{ result: ExperimentResult; insights: Insight[] }> {
   return request('/experiments/run', {
     method: 'POST',
     body: JSON.stringify(config),
@@ -72,7 +73,7 @@ export async function runExperiment(
 export async function runSweep(
   config: ExperimentConfig,
   layers?: number[],
-): Promise<ExperimentResult[]> {
+): Promise<{ results: ExperimentResult[]; insights: Insight[] }> {
   return request('/experiments/sweep', {
     method: 'POST',
     body: JSON.stringify({ config, layers: layers ?? null }),
