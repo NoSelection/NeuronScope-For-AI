@@ -1,4 +1,4 @@
-"""Generate a PDF report from a single experiment result."""
+"""Generate a polished dark-themed PDF report from a single experiment result."""
 
 from __future__ import annotations
 
@@ -8,41 +8,65 @@ from fpdf import FPDF
 
 from neuronscope.experiments.schema import ExperimentResult
 from neuronscope.analysis.insights import generate_insights
+from neuronscope.reports.utils import safe_text
 
 
-# Colours (same as sweep_report)
-BLUE = (59, 130, 246)
-AMBER = (245, 158, 11)
-TEXT = (228, 228, 231)
-TEXT_MUTED = (161, 161, 170)
-RED = (239, 68, 68)
-GREEN = (34, 197, 94)
+# ── Dark theme palette (matches frontend) ──
+PAGE_BG   = (17, 17, 24)
+CARD_BG   = (28, 28, 38)
+TABLE_HDR = (38, 38, 48)
+ROW_EVEN  = (25, 25, 34)
+ROW_ODD   = (20, 20, 28)
+BLUE      = (59, 130, 246)
+AMBER     = (245, 158, 11)
+TEXT      = (235, 235, 240)
+TEXT_MID  = (180, 180, 190)
+TEXT_DIM  = (130, 130, 142)
+RED       = (239, 68, 68)
+GREEN     = (34, 197, 94)
+BORDER    = (48, 48, 58)
 
 
-class ExperimentReport(FPDF):
+class _Report(FPDF):
+    """PDF with dark background and NeuronScope branding."""
+
     def header(self):
-        self.set_font("Helvetica", "B", 10)
-        self.set_text_color(*TEXT_MUTED)
-        self.cell(0, 8, "NeuronScope  - Experiment Report", align="L")
-        self.cell(0, 8, datetime.now().strftime("%Y-%m-%d %H:%M"), align="R", new_x="LMARGIN", new_y="NEXT")
-        self.set_draw_color(*TEXT_MUTED)
+        # Fill entire page with dark background
+        self.set_fill_color(*PAGE_BG)
+        self.rect(0, 0, self.w, self.h, "F")
+
+        # Blue accent stripe at top
+        self.set_fill_color(*BLUE)
+        self.rect(0, 0, self.w, 1.2, "F")
+
+        # Brand + date
+        self.set_y(4)
+        self.set_font("Helvetica", "B", 9)
+        self.set_text_color(*BLUE)
+        self.cell(28, 7, "NEURONSCOPE")
+        self.set_font("Helvetica", "", 8)
+        self.set_text_color(*TEXT_DIM)
+        self.cell(0, 7, "Experiment Report", align="L")
+        self.cell(0, 7, datetime.now().strftime("%Y-%m-%d %H:%M"), align="R",
+                  new_x="LMARGIN", new_y="NEXT")
+        self.set_draw_color(*BORDER)
         self.line(self.l_margin, self.get_y(), self.w - self.r_margin, self.get_y())
-        self.ln(4)
+        self.ln(3)
 
     def footer(self):
-        self.set_y(-15)
-        self.set_font("Helvetica", "", 8)
-        self.set_text_color(*TEXT_MUTED)
-        self.cell(0, 10, f"Page {self.page_no()}/{{nb}}", align="C")
+        self.set_y(-12)
+        self.set_font("Helvetica", "", 7)
+        self.set_text_color(*TEXT_DIM)
+        self.cell(0, 8, f"Page {self.page_no()}/{{nb}}", align="C")
 
 
 def generate_experiment_pdf(result: ExperimentResult) -> bytes:
     """Generate a single-experiment PDF report."""
     insights = generate_insights(result)
 
-    pdf = ExperimentReport(orientation="P", unit="mm", format="A4")
+    pdf = _Report(orientation="P", unit="mm", format="A4")
     pdf.alias_nb_pages()
-    pdf.set_auto_page_break(auto=True, margin=20)
+    pdf.set_auto_page_break(auto=True, margin=18)
     pdf.add_page()
 
     config = result.config
@@ -52,235 +76,308 @@ def generate_experiment_pdf(result: ExperimentResult) -> bytes:
     pdf.set_font("Helvetica", "B", 20)
     pdf.set_text_color(*TEXT)
     pdf.cell(0, 12, "Experiment Report", new_x="LMARGIN", new_y="NEXT")
+    pdf.ln(2)
 
-    pdf.set_font("Helvetica", "", 10)
-    pdf.set_text_color(*TEXT_MUTED)
-
-    base_input = config.base_input
-    if len(base_input) > 80:
-        base_input = base_input[:77] + "..."
-
-    lines = [
-        f'Prompt: "{base_input}"',
-        f"Experiment: {config.name or result.id}",
-    ]
-    if spec:
-        component = spec.target_component.replace("_", " ").title()
-        lines.append(f"Intervention: {spec.intervention_type.title()} on Layer {spec.target_layer} {component}")
-        if spec.target_position is not None:
-            lines.append(f"Token Position: {spec.target_position}")
-
-    lines += [
-        f"Seed: {config.seed}  |  Duration: {result.duration_seconds:.2f}s  |  Device: {result.device}",
-        f"Config hash: {result.config_hash}",
-    ]
-
-    for line in lines:
-        pdf.cell(0, 6, line, new_x="LMARGIN", new_y="NEXT")
+    # ── Config Info Card ──
+    _info_card(pdf, config, spec, result)
     pdf.ln(6)
 
-    # ── Key Metrics ──
-    pdf.set_font("Helvetica", "B", 13)
-    pdf.set_text_color(*BLUE)
-    pdf.cell(0, 10, "Key Metrics", new_x="LMARGIN", new_y="NEXT")
-
-    metrics = [
-        ("KL Divergence", f"{result.kl_divergence:.4f}", _kl_label(result.kl_divergence)),
-        ("Top Token Changed", "YES" if result.top_token_changed else "NO", ""),
-        ("Clean Output", f'"{result.clean_output_token}" (p={result.clean_output_prob:.4f})', ""),
-        ("Intervention Output", f'"{result.intervention_output_token}" (p={result.intervention_output_prob:.4f})', ""),
-    ]
-
-    for label, value, note in metrics:
-        pdf.set_font("Helvetica", "B", 10)
-        pdf.set_text_color(*TEXT)
-        pdf.cell(50, 6, label + ":", new_x="END")
-        pdf.set_font("Helvetica", "", 10)
-        color = AMBER if ("YES" in value or result.kl_divergence > 1) and "Changed" in label else TEXT
-        pdf.set_text_color(*color)
-        pdf.cell(60, 6, value, new_x="END")
-        if note:
-            pdf.set_font("Helvetica", "I", 8)
-            pdf.set_text_color(*TEXT_MUTED)
-            pdf.cell(0, 6, note, new_x="LMARGIN", new_y="NEXT")
-        else:
-            pdf.cell(0, 6, "", new_x="LMARGIN", new_y="NEXT")
-
-    pdf.ln(4)
+    # ── Key Metrics (2x2 grid) ──
+    _section_heading(pdf, "Key Metrics")
+    pdf.ln(1)
+    _metrics_grid(pdf, result)
+    pdf.ln(6)
 
     # ── Top-K Comparison ──
-    pdf.set_font("Helvetica", "B", 13)
-    pdf.set_text_color(*BLUE)
-    pdf.cell(0, 10, "Top-10 Predictions: Clean vs Intervention", new_x="LMARGIN", new_y="NEXT")
-
-    pdf.set_font("Helvetica", "", 9)
-    pdf.set_text_color(*TEXT_MUTED)
-    pdf.multi_cell(0, 4.5, (
-        "These tables show the model's top 10 most-likely next words, "
-        "before and after the intervention. Compare them side by side "
-        "to see which words gained or lost probability."
+    _section_heading(pdf, "Top-10 Predictions: Clean vs Intervention")
+    pdf.set_font("Helvetica", "", 8)
+    pdf.set_text_color(*TEXT_DIM)
+    pdf.multi_cell(0, 4, (
+        "The model's top 10 most-likely next tokens, before and after "
+        "the intervention. Compare to see which words gained or lost probability."
     ))
     pdf.ln(3)
 
-    # Side by side tables
     half_w = (pdf.w - pdf.l_margin - pdf.r_margin - 6) / 2
-
     y_start = pdf.get_y()
-
-    # Clean run table
     _topk_table(pdf, "Clean Run", result.clean_top_k, pdf.l_margin, y_start, half_w)
-
-    # Intervention run table
-    _topk_table(pdf, "Intervention Run", result.intervention_top_k, pdf.l_margin + half_w + 6, y_start, half_w)
-
-    # Move Y past both tables
-    pdf.set_y(y_start + 6 + 5.5 * min(len(result.clean_top_k), 10) + 8)
+    _topk_table(pdf, "Intervention Run", result.intervention_top_k,
+                pdf.l_margin + half_w + 6, y_start, half_w)
+    pdf.set_y(y_start + 8 + 5 * min(len(result.clean_top_k), 10) + 6)
     pdf.ln(4)
 
     # ── Rank Changes ──
     if result.rank_changes:
-        if pdf.get_y() > 210:
+        if pdf.get_y() > 200:
             pdf.add_page()
-
-        pdf.set_font("Helvetica", "B", 13)
-        pdf.set_text_color(*BLUE)
-        pdf.cell(0, 10, "Significant Rank Changes", new_x="LMARGIN", new_y="NEXT")
-
-        pdf.set_font("Helvetica", "", 9)
-        pdf.set_text_color(*TEXT_MUTED)
-        pdf.multi_cell(0, 4.5, (
-            "Shows words that moved significantly in the model's ranking. "
-            "A positive delta means the word became less likely (dropped in rank). "
-            "A negative delta means it became more likely (rose in rank)."
+        _section_heading(pdf, "Significant Rank Changes")
+        pdf.set_font("Helvetica", "", 8)
+        pdf.set_text_color(*TEXT_DIM)
+        pdf.multi_cell(0, 4, (
+            "Tokens that moved significantly in the model's ranking. "
+            "Positive delta = dropped (less likely). Negative delta = rose (more likely)."
         ))
         pdf.ln(3)
-
-        sorted_rc = sorted(
-            result.rank_changes.items(),
-            key=lambda x: abs(x[1]["rank_delta"]),
-            reverse=True,
-        )[:20]
-
-        col_w = [40, 35, 40, 35]
-        headers = ["Token", "Clean Rank", "Intervention Rank", "Delta"]
-
-        pdf.set_font("Helvetica", "B", 8)
-        pdf.set_fill_color(39, 39, 42)
-        pdf.set_text_color(*TEXT)
-        for i, (h, w) in enumerate(zip(headers, col_w)):
-            pdf.cell(w, 6, h, fill=True, align="C",
-                     new_x="END" if i < len(headers) - 1 else "LMARGIN",
-                     new_y="TOP" if i < len(headers) - 1 else "NEXT")
-
-        pdf.set_font("Helvetica", "", 8)
-        for j, (token, rc) in enumerate(sorted_rc):
-            if pdf.get_y() > 270:
-                pdf.add_page()
-
-            token_display = token.strip()[:12]
-            delta = rc["rank_delta"]
-            delta_str = f"+{delta}" if delta > 0 else str(delta)
-            delta_color = RED if delta > 0 else GREEN if delta < 0 else TEXT_MUTED
-
-            if j % 2 == 0:
-                pdf.set_fill_color(30, 30, 36)
-            else:
-                pdf.set_fill_color(24, 24, 32)
-
-            row = [f'"{token_display}"', str(rc["clean_rank"]), str(rc["intervention_rank"]), delta_str]
-            colors = [TEXT, TEXT_MUTED, TEXT_MUTED, delta_color]
-
-            for i, (val, w, c) in enumerate(zip(row, col_w, colors)):
-                pdf.set_text_color(*c)
-                pdf.cell(w, 5.5, val, fill=True, align="C",
-                         new_x="END" if i < len(row) - 1 else "LMARGIN",
-                         new_y="TOP" if i < len(row) - 1 else "NEXT")
-
+        _rank_table(pdf, result.rank_changes)
         pdf.ln(4)
 
     # ── Insights ──
-    if pdf.get_y() > 230:
+    if pdf.get_y() > 220:
         pdf.add_page()
-
-    pdf.set_font("Helvetica", "B", 13)
-    pdf.set_text_color(*BLUE)
-    pdf.cell(0, 10, "What This Means", new_x="LMARGIN", new_y="NEXT")
-
-    type_colors = {"critical": RED, "notable": AMBER, "info": BLUE}
-    type_labels = {"critical": "IMPORTANT", "notable": "NOTABLE", "info": "INFO"}
-
+    _section_heading(pdf, "What This Means")
+    pdf.ln(1)
     for insight in insights:
-        if pdf.get_y() > 255:
+        if pdf.get_y() > 250:
             pdf.add_page()
+        _insight_block(pdf, insight)
+    pdf.ln(4)
 
-        color = type_colors.get(insight["type"], BLUE)
-        label = type_labels.get(insight["type"], "INFO")
-
-        pdf.set_font("Helvetica", "B", 8)
-        pdf.set_text_color(*color)
-        pdf.cell(20, 5, f"[{label}]", new_x="END")
-
-        pdf.set_font("Helvetica", "B", 10)
-        pdf.set_text_color(*TEXT)
-        pdf.cell(0, 5, f"  {insight['title']}", new_x="LMARGIN", new_y="NEXT")
-
-        pdf.set_font("Helvetica", "", 9)
-        pdf.set_text_color(*TEXT_MUTED)
-        pdf.multi_cell(0, 4.5, insight["detail"])
-        pdf.ln(2)
-
-    # Footer
-    pdf.ln(6)
-    pdf.set_font("Helvetica", "I", 8)
-    pdf.set_text_color(*TEXT_MUTED)
-    pdf.multi_cell(0, 4, (
-        "Generated by NeuronScope  - an open-source mechanistic interpretability tool. "
+    # ── Report footer ──
+    pdf.set_draw_color(*BORDER)
+    pdf.line(pdf.l_margin, pdf.get_y(), pdf.w - pdf.r_margin, pdf.get_y())
+    pdf.ln(3)
+    pdf.set_font("Helvetica", "I", 7)
+    pdf.set_text_color(*TEXT_DIM)
+    pdf.multi_cell(0, 3.5, (
+        "Generated by NeuronScope - an open-source mechanistic interpretability tool. "
         "Understanding is measured by controllability."
     ))
 
     return pdf.output()
 
 
-def _topk_table(pdf, title, predictions, x, y, width):
-    """Render a top-k table at a specific position."""
-    col_widths = [width * 0.12, width * 0.35, width * 0.27, width * 0.26]
+# ── Helpers ──
 
+def _section_heading(pdf, title):
+    pdf.set_font("Helvetica", "B", 13)
+    pdf.set_text_color(*BLUE)
+    pdf.cell(0, 9, title, new_x="LMARGIN", new_y="NEXT")
+
+
+def _info_card(pdf, config, spec, result):
+    """Experiment config rendered as a bordered card with accent bar."""
+    x = pdf.l_margin
+    w = pdf.w - pdf.l_margin - pdf.r_margin
+    y = pdf.get_y()
+
+    base_input = config.base_input
+    if len(base_input) > 80:
+        base_input = base_input[:77] + "..."
+
+    lines = [f'Prompt: "{base_input}"']
+    lines.append(f"Experiment: {config.name or result.id}")
+    if spec:
+        component = spec.target_component.replace("_", " ").title()
+        lines.append(f"Intervention: {spec.intervention_type.title()} on Layer {spec.target_layer} {component}")
+        if spec.target_position is not None:
+            lines.append(f"Token Position: {spec.target_position}")
+    lines.append(f"Seed: {config.seed}  |  Duration: {result.duration_seconds:.2f}s  |  Device: {result.device}")
+    lines.append(f"Config hash: {result.config_hash}")
+
+    card_h = 5 + len(lines) * 5.5 + 3
+
+    # Card background + border
+    pdf.set_fill_color(*CARD_BG)
+    pdf.set_draw_color(*BORDER)
+    pdf.rect(x, y, w, card_h, "DF")
+
+    # Left accent bar
+    pdf.set_fill_color(*BLUE)
+    pdf.rect(x, y, 2, card_h, "F")
+
+    # Content
+    pdf.set_font("Helvetica", "", 9)
+    pdf.set_text_color(*TEXT_MID)
+    for i, line in enumerate(lines):
+        pdf.set_xy(x + 6, y + 4 + i * 5.5)
+        pdf.cell(w - 10, 5, safe_text(line))
+
+    pdf.set_y(y + card_h)
+
+
+def _metrics_grid(pdf, result):
+    """2x2 grid of metric cards with left accent bars."""
+    x = pdf.l_margin
+    w = pdf.w - pdf.l_margin - pdf.r_margin
+    card_w = (w - 4) / 2
+    card_h = 22
+    y = pdf.get_y()
+
+    kl = result.kl_divergence
+    kl_color = RED if kl > 10 else AMBER if kl > 1 else GREEN
+    _metric_card(pdf, x, y, card_w, card_h,
+                 "KL Divergence", f"{kl:.4f}", _kl_label(kl), kl_color)
+
+    changed = result.top_token_changed
+    tc_color = AMBER if changed else GREEN
+    _metric_card(pdf, x + card_w + 4, y, card_w, card_h,
+                 "Top Token Changed", "YES" if changed else "NO", "", tc_color)
+
+    y += card_h + 3
+
+    _metric_card(pdf, x, y, card_w, card_h,
+                 "Clean Output",
+                 safe_text(f'"{result.clean_output_token}"'),
+                 f"p = {result.clean_output_prob:.4f}", BLUE)
+
+    _metric_card(pdf, x + card_w + 4, y, card_w, card_h,
+                 "Intervention Output",
+                 safe_text(f'"{result.intervention_output_token}"'),
+                 f"p = {result.intervention_output_prob:.4f}", AMBER)
+
+    pdf.set_y(y + card_h)
+
+
+def _metric_card(pdf, x, y, w, h, label, value, sub, accent):
+    """Single metric card with label, value, sub-label, and left accent bar."""
+    # Background
+    pdf.set_fill_color(*CARD_BG)
+    pdf.set_draw_color(*BORDER)
+    pdf.rect(x, y, w, h, "DF")
+
+    # Left accent
+    pdf.set_fill_color(*accent)
+    pdf.rect(x, y, 2, h, "F")
+
+    # Label
+    pdf.set_xy(x + 6, y + 3)
+    pdf.set_font("Helvetica", "", 7)
+    pdf.set_text_color(*TEXT_DIM)
+    pdf.cell(w - 8, 4, label)
+
+    # Value
+    pdf.set_xy(x + 6, y + 8)
+    pdf.set_font("Helvetica", "B", 13)
+    pdf.set_text_color(*TEXT)
+    pdf.cell(w - 8, 7, safe_text(value))
+
+    # Sub-label
+    if sub:
+        pdf.set_xy(x + 6, y + 16)
+        pdf.set_font("Helvetica", "I", 7)
+        pdf.set_text_color(*accent)
+        pdf.cell(w - 8, 4, safe_text(sub))
+
+
+def _topk_table(pdf, title, predictions, x, y, width):
+    """Render a top-k prediction table at a specific (x, y) position."""
+    col_w = [width * 0.10, width * 0.34, width * 0.28, width * 0.28]
+
+    # Title
     pdf.set_xy(x, y)
     pdf.set_font("Helvetica", "B", 9)
     pdf.set_text_color(*TEXT)
-    pdf.cell(width, 6, title, new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(width, 6, title)
 
-    pdf.set_xy(x, y + 6)
+    # Table header
+    pdf.set_xy(x, y + 7)
     pdf.set_font("Helvetica", "B", 7)
-    pdf.set_fill_color(39, 39, 42)
-    headers = ["#", "Token", "Logit", "Prob"]
-    for i, (h, w) in enumerate(zip(headers, col_widths)):
+    pdf.set_fill_color(*TABLE_HDR)
+    pdf.set_text_color(*TEXT_MID)
+    for h, w in zip(["#", "Token", "Logit", "Prob"], col_w):
         pdf.cell(w, 5, h, fill=True, align="C", new_x="END", new_y="TOP")
     pdf.ln()
 
+    # Rows
     pdf.set_font("Helvetica", "", 7)
     for j, p in enumerate(predictions[:10]):
-        pdf.set_xy(x, y + 11 + j * 5.5)
-        if j % 2 == 0:
-            pdf.set_fill_color(30, 30, 36)
-        else:
-            pdf.set_fill_color(24, 24, 32)
+        pdf.set_xy(x, y + 12 + j * 5)
+        pdf.set_fill_color(*(ROW_EVEN if j % 2 == 0 else ROW_ODD))
 
-        token_str = p.token.strip()[:10]
+        token_str = safe_text(p.token.strip()[:10])
         row = [str(j + 1), f'"{token_str}"', f"{p.logit:.2f}", f"{p.prob * 100:.1f}%"]
 
-        for i, (val, w) in enumerate(zip(row, col_widths)):
+        for val, cw in zip(row, col_w):
             pdf.set_text_color(*TEXT)
-            pdf.cell(w, 5.5, val, fill=True, align="C", new_x="END", new_y="TOP")
+            pdf.cell(cw, 5, val, fill=True, align="C", new_x="END", new_y="TOP")
         pdf.ln()
+
+
+def _rank_table(pdf, rank_changes):
+    """Render the rank changes table."""
+    sorted_rc = sorted(
+        rank_changes.items(),
+        key=lambda x: abs(x[1]["rank_delta"]),
+        reverse=True,
+    )[:20]
+
+    col_w = [40, 35, 40, 35]
+    headers = ["Token", "Clean Rank", "Intervention Rank", "Delta"]
+
+    # Header
+    pdf.set_font("Helvetica", "B", 8)
+    pdf.set_fill_color(*TABLE_HDR)
+    pdf.set_text_color(*TEXT_MID)
+    for i, (h, w) in enumerate(zip(headers, col_w)):
+        pdf.cell(w, 6, h, fill=True, align="C",
+                 new_x="END" if i < len(headers) - 1 else "LMARGIN",
+                 new_y="TOP" if i < len(headers) - 1 else "NEXT")
+
+    # Rows
+    pdf.set_font("Helvetica", "", 8)
+    for j, (token, rc) in enumerate(sorted_rc):
+        if pdf.get_y() > 270:
+            pdf.add_page()
+
+        pdf.set_fill_color(*(ROW_EVEN if j % 2 == 0 else ROW_ODD))
+
+        token_display = safe_text(token.strip()[:12])
+        delta = rc["rank_delta"]
+        delta_str = f"+{delta}" if delta > 0 else str(delta)
+        delta_color = RED if delta > 0 else GREEN if delta < 0 else TEXT_DIM
+
+        row = [f'"{token_display}"', str(rc["clean_rank"]), str(rc["intervention_rank"]), delta_str]
+        colors = [TEXT, TEXT_DIM, TEXT_DIM, delta_color]
+
+        for i, (val, w, c) in enumerate(zip(row, col_w, colors)):
+            pdf.set_text_color(*c)
+            pdf.cell(w, 5.5, val, fill=True, align="C",
+                     new_x="END" if i < len(row) - 1 else "LMARGIN",
+                     new_y="TOP" if i < len(row) - 1 else "NEXT")
+
+
+def _insight_block(pdf, insight):
+    """Render an insight with a colored left accent bar."""
+    type_colors = {"critical": RED, "notable": AMBER, "info": BLUE}
+    type_labels = {"critical": "IMPORTANT", "notable": "NOTABLE", "info": "INFO"}
+
+    color = type_colors.get(insight["type"], BLUE)
+    label = type_labels.get(insight["type"], "INFO")
+
+    x = pdf.l_margin
+    w = pdf.w - pdf.l_margin - pdf.r_margin
+    y_start = pdf.get_y()
+
+    # Badge + Title
+    pdf.set_x(x + 6)
+    pdf.set_font("Helvetica", "B", 7)
+    pdf.set_text_color(*color)
+    pdf.cell(18, 5, f"[{label}]", new_x="END")
+    pdf.set_font("Helvetica", "B", 9)
+    pdf.set_text_color(*TEXT)
+    pdf.cell(0, 5, safe_text(insight["title"]), new_x="LMARGIN", new_y="NEXT")
+
+    # Detail
+    pdf.set_x(x + 6)
+    pdf.set_font("Helvetica", "", 8)
+    pdf.set_text_color(*TEXT_MID)
+    pdf.multi_cell(w - 8, 4, safe_text(insight["detail"]))
+
+    y_end = pdf.get_y()
+
+    # Draw left accent bar (rendered after text, but on left side so no overlap)
+    pdf.set_fill_color(*color)
+    pdf.rect(x, y_start, 2.5, y_end - y_start, "F")
+
+    pdf.set_y(y_end + 3)
 
 
 def _kl_label(kl: float) -> str:
     if kl > 10:
-        return "(Critical effect)"
+        return "Critical effect"
     elif kl > 5:
-        return "(High effect)"
+        return "High effect"
     elif kl > 1:
-        return "(Moderate effect)"
+        return "Moderate effect"
     else:
-        return "(Low effect)"
+        return "Low effect"
