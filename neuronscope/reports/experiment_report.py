@@ -157,7 +157,7 @@ def generate_experiment_pdf(result: ExperimentResult) -> bytes:
 
         sorted_rc = sorted(
             result.rank_changes.items(),
-            key=lambda x: abs(x[1].rank_delta),
+            key=lambda x: abs(x[1]["rank_delta"]),
             reverse=True,
         )[:20]
 
@@ -178,7 +178,7 @@ def generate_experiment_pdf(result: ExperimentResult) -> bytes:
                 pdf.add_page()
 
             token_display = token.strip()[:12]
-            delta = rc.rank_delta
+            delta = rc["rank_delta"]
             delta_str = f"+{delta}" if delta > 0 else str(delta)
             delta_color = RED if delta > 0 else GREEN if delta < 0 else TEXT_MUTED
 
@@ -187,7 +187,7 @@ def generate_experiment_pdf(result: ExperimentResult) -> bytes:
             else:
                 pdf.set_fill_color(24, 24, 32)
 
-            row = [f'"{token_display}"', str(rc.clean_rank), str(rc.intervention_rank), delta_str]
+            row = [f'"{token_display}"', str(rc["clean_rank"]), str(rc["intervention_rank"]), delta_str]
             colors = [TEXT, TEXT_MUTED, TEXT_MUTED, delta_color]
 
             for i, (val, w, c) in enumerate(zip(row, col_w, colors)):
