@@ -1,5 +1,7 @@
 import { useModelStore } from '../../stores/modelStore';
 import { Panel } from '../common/Panel';
+import { InfoTip } from '../common/InfoTip';
+import type { EducationKey } from '../../education/content';
 
 export function ModelInfoPanel() {
   const { info, loaded, loading, error, loadModel, unloadModel } = useModelStore();
@@ -7,7 +9,7 @@ export function ModelInfoPanel() {
   if (!loaded) {
     return (
       <Panel title="Model">
-        <div className="space-y-3">
+        <div className="space-y-3" data-tour="model-panel">
           <p className="text-sm text-zinc-400">No model loaded.</p>
           <button
             onClick={() => loadModel()}
@@ -34,13 +36,13 @@ export function ModelInfoPanel() {
         </button>
       }
     >
-      <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
-        <Stat label="Architecture" value={info!.architecture} />
-        <Stat label="Layers" value={info!.num_layers} />
-        <Stat label="Hidden Size" value={info!.hidden_size} />
-        <Stat label="Intermediate" value={info!.intermediate_size} />
-        <Stat label="Vocab Size" value={info!.vocab_size.toLocaleString()} />
-        <Stat label="Dtype" value={info!.dtype} />
+      <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm" data-tour="model-panel">
+        <Stat label="Architecture" value={info!.architecture} topic="architecture" />
+        <Stat label="Layers" value={info!.num_layers} topic="num_layers" />
+        <Stat label="Hidden Size" value={info!.hidden_size} topic="hidden_size" />
+        <Stat label="Intermediate" value={info!.intermediate_size} topic="intermediate_size" />
+        <Stat label="Vocab Size" value={info!.vocab_size.toLocaleString()} topic="vocab_size" />
+        <Stat label="Dtype" value={info!.dtype} topic="dtype" />
         <Stat label="Device" value={info!.device} />
         {info!.sliding_window && (
           <Stat label="Sliding Window" value={info!.sliding_window} />
@@ -51,11 +53,20 @@ export function ModelInfoPanel() {
   );
 }
 
-function Stat({ label, value }: { label: string; value: string | number }) {
+function Stat({
+  label,
+  value,
+  topic,
+}: {
+  label: string;
+  value: string | number;
+  topic?: EducationKey;
+}) {
   return (
-    <div>
+    <div className="flex items-center gap-1">
       <span className="text-zinc-500">{label}: </span>
       <span className="font-mono text-zinc-200">{value}</span>
+      {topic && <InfoTip topic={topic} iconOnly />}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import type { Insight } from '../../api/types';
 import { Panel } from '../common/Panel';
+import { InfoTip } from '../common/InfoTip';
 
 interface Props {
   insights: Insight[];
@@ -31,6 +32,9 @@ export function InsightsPanel({ insights }: Props) {
 
   return (
     <Panel title="What This Means">
+      <div className="mb-3 flex items-center gap-1.5 text-xs text-zinc-500">
+        <InfoTip topic="insights">What are insights?</InfoTip>
+      </div>
       <div className="space-y-3">
         {insights.map((insight, i) => {
           const style = TYPE_STYLES[insight.type];

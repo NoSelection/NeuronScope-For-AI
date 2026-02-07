@@ -1,9 +1,29 @@
 import { useExperimentStore } from '../../stores/experimentStore';
 import { COMPONENT_LABELS, INTERVENTION_LABELS } from '../../api/types';
 import type { ComponentType, InterventionType } from '../../api/types';
+import { InfoLabel } from '../common/InfoTip';
+import type { EducationKey } from '../../education/content';
 
 const COMPONENTS = Object.entries(COMPONENT_LABELS) as [ComponentType, string][];
 const INTERVENTION_TYPES = Object.entries(INTERVENTION_LABELS) as [InterventionType, string][];
+
+const COMPONENT_TOPIC_MAP: Record<ComponentType, EducationKey> = {
+  embedding: 'component_embedding',
+  residual_pre: 'component_residual_pre',
+  residual_post: 'component_residual_post',
+  attn_output: 'component_attn_output',
+  attn_pattern: 'component_attn_pattern',
+  mlp_gate: 'component_mlp_gate',
+  mlp_output: 'component_mlp_output',
+  final_logits: 'component_final_logits',
+};
+
+const INTERVENTION_TOPIC_MAP: Record<InterventionType, EducationKey> = {
+  zero: 'intervention_zero',
+  mean: 'intervention_mean',
+  patch: 'intervention_patch',
+  additive: 'intervention_additive',
+};
 
 interface Props {
   numLayers: number;
@@ -37,7 +57,7 @@ export function InterventionSelector({ numLayers }: Props) {
           <div className="grid grid-cols-2 gap-3">
             {/* Layer */}
             <div>
-              <label className="mb-1 block text-xs text-zinc-500">Layer</label>
+              <InfoLabel topic="layer">Layer</InfoLabel>
               <select
                 value={intervention.target_layer}
                 onChange={(e) =>
@@ -57,7 +77,7 @@ export function InterventionSelector({ numLayers }: Props) {
 
             {/* Component */}
             <div>
-              <label className="mb-1 block text-xs text-zinc-500">Component</label>
+              <InfoLabel topic="component">Component</InfoLabel>
               <select
                 value={intervention.target_component}
                 onChange={(e) =>
@@ -77,7 +97,9 @@ export function InterventionSelector({ numLayers }: Props) {
 
             {/* Intervention Type */}
             <div>
-              <label className="mb-1 block text-xs text-zinc-500">Type</label>
+              <InfoLabel topic={INTERVENTION_TOPIC_MAP[intervention.intervention_type]}>
+                Type
+              </InfoLabel>
               <select
                 value={intervention.intervention_type}
                 onChange={(e) =>
@@ -97,9 +119,7 @@ export function InterventionSelector({ numLayers }: Props) {
 
             {/* Token Position (optional) */}
             <div>
-              <label className="mb-1 block text-xs text-zinc-500">
-                Token Position
-              </label>
+              <InfoLabel topic="token_position">Token Position</InfoLabel>
               <input
                 type="number"
                 value={intervention.target_position ?? ''}

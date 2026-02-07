@@ -1,6 +1,7 @@
 import type { ExperimentResult, TokenPrediction } from '../../api/types';
 import { MetricCard } from '../common/MetricCard';
 import { Panel } from '../common/Panel';
+import { InfoTip } from '../common/InfoTip';
 
 interface Props {
   result: ExperimentResult;
@@ -17,21 +18,25 @@ export function ResultsPanel({ result }: Props) {
             value={result.kl_divergence}
             subtitle="Higher = larger causal effect"
             highlight={result.kl_divergence > 1.0}
+            topic="kl_divergence"
           />
           <MetricCard
             label="Top Token Changed"
             value={result.top_token_changed ? 'YES' : 'NO'}
             highlight={result.top_token_changed}
+            topic="top_token_changed"
           />
           <MetricCard
             label="Clean Output"
             value={`"${result.clean_output_token}"`}
             subtitle={`p=${result.clean_output_prob.toFixed(4)}`}
+            topic="clean_output"
           />
           <MetricCard
             label="Intervention Output"
             value={`"${result.intervention_output_token}"`}
             subtitle={`p=${result.intervention_output_prob.toFixed(4)}`}
+            topic="intervention_output"
           />
         </div>
 
@@ -44,8 +49,9 @@ export function ResultsPanel({ result }: Props) {
         {/* Rank Changes */}
         {Object.keys(result.rank_changes).length > 0 && (
           <div>
-            <h3 className="mb-2 text-xs uppercase tracking-wider text-zinc-400">
+            <h3 className="mb-2 flex items-center gap-1.5 text-xs uppercase tracking-wider text-zinc-400">
               Rank Changes (Top-20)
+              <InfoTip topic="rank_changes" iconOnly />
             </h3>
             <div className="max-h-48 overflow-y-auto rounded-lg border border-zinc-700/50 bg-zinc-800/30">
               <table className="w-full text-sm">
@@ -94,7 +100,10 @@ export function ResultsPanel({ result }: Props) {
         <div className="flex gap-4 text-xs text-zinc-500">
           <span>Duration: {result.duration_seconds.toFixed(2)}s</span>
           <span>Device: {result.device}</span>
-          <span>Hash: {result.config_hash}</span>
+          <span className="inline-flex items-center gap-1">
+            Hash: {result.config_hash}
+            <InfoTip topic="config_hash" iconOnly />
+          </span>
         </div>
       </div>
     </Panel>
@@ -117,8 +126,16 @@ function TopKTable({
             <tr className="border-b border-zinc-700/50 text-left text-xs text-zinc-500">
               <th className="px-3 py-2">#</th>
               <th className="px-3 py-2">Token</th>
-              <th className="px-3 py-2">Logit</th>
-              <th className="px-3 py-2">Prob</th>
+              <th className="px-3 py-2">
+                <span className="inline-flex items-center gap-1">
+                  Logit <InfoTip topic="logit" iconOnly />
+                </span>
+              </th>
+              <th className="px-3 py-2">
+                <span className="inline-flex items-center gap-1">
+                  Prob <InfoTip topic="probability" iconOnly />
+                </span>
+              </th>
             </tr>
           </thead>
           <tbody>

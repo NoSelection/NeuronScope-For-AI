@@ -21,7 +21,7 @@ export function ExperimentWorkbench() {
       </div>
 
       {/* Right column: results + insights */}
-      <div className="space-y-5 lg:col-span-7">
+      <div className="space-y-5 lg:col-span-7" data-tour="results-area">
         {insights.length > 0 && <InsightsPanel insights={insights} />}
         {currentResult && <ResultsPanel result={currentResult} />}
         {sweepResults.length > 0 && <SweepResults results={sweepResults} />}

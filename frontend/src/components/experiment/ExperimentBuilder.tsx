@@ -2,6 +2,7 @@ import { useExperimentStore } from '../../stores/experimentStore';
 import { useModelStore } from '../../stores/modelStore';
 import { InterventionSelector } from './InterventionSelector';
 import { Panel } from '../common/Panel';
+import { InfoLabel } from '../common/InfoTip';
 
 export function ExperimentBuilder() {
   const { config, updateConfig, running, error, runExperiment, runSweep, resetConfig } =
@@ -25,7 +26,7 @@ export function ExperimentBuilder() {
       <div className="space-y-4">
         {/* Experiment Name */}
         <div>
-          <label className="mb-1 block text-xs text-zinc-400">Experiment Name</label>
+          <InfoLabel topic="experiment_name">Experiment Name</InfoLabel>
           <input
             type="text"
             value={config.name}
@@ -36,8 +37,8 @@ export function ExperimentBuilder() {
         </div>
 
         {/* Base Input */}
-        <div>
-          <label className="mb-1 block text-xs text-zinc-400">Base Input</label>
+        <div data-tour="base-input">
+          <InfoLabel topic="base_input">Base Input</InfoLabel>
           <textarea
             value={config.base_input}
             onChange={(e) => updateConfig({ base_input: e.target.value })}
@@ -50,9 +51,9 @@ export function ExperimentBuilder() {
         {/* Source Input (for activation patching) */}
         {config.interventions.some((i) => i.intervention_type === 'patch') && (
           <div>
-            <label className="mb-1 block text-xs text-zinc-400">
+            <InfoLabel topic="source_input">
               Source Input (for Activation Patching)
-            </label>
+            </InfoLabel>
             <textarea
               value={config.source_input ?? ''}
               onChange={(e) =>
@@ -66,15 +67,15 @@ export function ExperimentBuilder() {
         )}
 
         {/* Interventions */}
-        <div>
-          <label className="mb-2 block text-xs text-zinc-400">Interventions</label>
+        <div data-tour="intervention">
+          <InfoLabel topic="intervention">Interventions</InfoLabel>
           <InterventionSelector numLayers={info?.num_layers ?? 34} />
         </div>
 
         {/* Seed */}
         <div className="flex gap-4">
           <div className="flex-1">
-            <label className="mb-1 block text-xs text-zinc-400">Seed</label>
+            <InfoLabel topic="seed">Seed</InfoLabel>
             <input
               type="number"
               value={config.seed}
@@ -92,7 +93,7 @@ export function ExperimentBuilder() {
         )}
 
         {/* Run Buttons */}
-        <div className="flex gap-3">
+        <div className="flex gap-3" data-tour="run-button">
           <button
             onClick={runExperiment}
             disabled={!canRun || running}

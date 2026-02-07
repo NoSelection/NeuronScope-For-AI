@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import type { ExperimentResult } from '../../api/types';
 import { Panel } from '../common/Panel';
+import { InfoTip } from '../common/InfoTip';
 
 interface Props {
   results: ExperimentResult[];
@@ -101,10 +102,14 @@ export function SweepResults({ results }: Props) {
   return (
     <Panel title="Layer Sweep Results">
       <div className="space-y-4">
+        <div className="mb-1 flex items-center gap-1.5 text-xs text-zinc-500">
+          <InfoTip topic="layer_sweep">What is a layer sweep?</InfoTip>
+        </div>
         <div className="flex gap-4 text-sm">
-          <span className="text-zinc-400">
+          <span className="inline-flex items-center gap-1 text-zinc-400">
             Peak KL: <span className="font-mono text-amber-400">{maxKL.toFixed(4)}</span> at
             layer {maxLayer?.config.interventions[0]?.target_layer}
+            <InfoTip topic="peak_kl" iconOnly />
           </span>
           <span className="text-zinc-400">
             Top token changed in{' '}
