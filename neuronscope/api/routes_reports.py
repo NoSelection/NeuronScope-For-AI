@@ -45,7 +45,7 @@ async def sweep_report(request: SweepReportRequest):
     )
 
     await store.save_many(results)
-    pdf_bytes = generate_sweep_pdf(results)
+    pdf_bytes = bytes(generate_sweep_pdf(results))
 
     return Response(
         content=pdf_bytes,
@@ -65,7 +65,7 @@ async def experiment_report_from_config(config: ExperimentConfig):
     result = await loop.run_in_executor(None, partial(runner.run, config))
 
     await store.save(result)
-    pdf_bytes = generate_experiment_pdf(result)
+    pdf_bytes = bytes(generate_experiment_pdf(result))
 
     return Response(
         content=pdf_bytes,
@@ -83,7 +83,7 @@ async def experiment_report_from_id(experiment_id: str):
     if result is None:
         raise HTTPException(status_code=404, detail="Experiment not found")
 
-    pdf_bytes = generate_experiment_pdf(result)
+    pdf_bytes = bytes(generate_experiment_pdf(result))
 
     return Response(
         content=pdf_bytes,
