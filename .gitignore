@@ -180,3 +180,14 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 AGENTS.md
+
+# LLM model files (keep placeholder, ignore weights and configs)
+LLM/*
+!LLM/put llm here.txt
+
+# Runtime data
+data/
+
+# Frontend
+node_modules/
+frontend/dist/

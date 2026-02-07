@@ -1,0 +1,51 @@
+[project]
+name = "neuronscope"
+version = "0.1.0"
+description = "Mechanistic interpretability tool for causal intervention on LLM internals"
+requires-python = ">=3.10"
+
+dependencies = [
+    # Core ML
+    "torch>=2.1.0",
+    "transformers>=4.50.0",
+    "accelerate>=0.25.0",
+    "safetensors>=0.4.0",
+
+    # API
+    "fastapi>=0.110.0",
+    "uvicorn[standard]>=0.27.0",
+    "websockets>=12.0",
+    "pydantic>=2.5.0",
+
+    # Storage
+    "aiosqlite>=0.19.0",
+
+    # Analysis
+    "einops>=0.7.0",
+    "numpy>=1.24.0",
+
+    # Utilities
+    "rich>=13.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "hypothesis>=6.0",
+    "ruff>=0.2.0",
+]
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["neuronscope*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
