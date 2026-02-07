@@ -20,6 +20,7 @@ from fpdf import FPDF
 
 from neuronscope.experiments.schema import ExperimentResult
 from neuronscope.analysis.insights import generate_sweep_insights
+from neuronscope.reports.utils import safe_text
 
 
 # -- Colour palette (matches frontend dark theme) --
@@ -119,7 +120,7 @@ def _title_section(pdf: SweepReport, config, results: list[ExperimentResult]):
         f"Config hash: {results[0].config_hash}",
     ]
     for line in lines:
-        pdf.cell(0, 6, line, new_x="LMARGIN", new_y="NEXT")
+        pdf.cell(0, 6, safe_text(line), new_x="LMARGIN", new_y="NEXT")
 
     pdf.ln(6)
 
@@ -224,12 +225,12 @@ def _insights_section(pdf: SweepReport, insights: list[dict]):
         # Title
         pdf.set_font("Helvetica", "B", 10)
         pdf.set_text_color(*TEXT)
-        pdf.cell(0, 5, f"  {insight['title']}", new_x="LMARGIN", new_y="NEXT")
+        pdf.cell(0, 5, safe_text(f"  {insight['title']}"), new_x="LMARGIN", new_y="NEXT")
 
         # Detail
         pdf.set_font("Helvetica", "", 9)
         pdf.set_text_color(*TEXT_MUTED)
-        pdf.multi_cell(0, 4.5, insight["detail"])
+        pdf.multi_cell(0, 4.5, safe_text(insight["detail"]))
         pdf.ln(3)
 
 
@@ -306,7 +307,7 @@ def _results_table(pdf: SweepReport, results: list[ExperimentResult]):
         else:
             pdf.set_fill_color(24, 24, 32)
 
-        row_data = [str(layer), kl, changed_str, effect, f'"{clean_tok}"', f'"{int_tok}"', duration]
+        row_data = [str(layer), kl, changed_str, effect, f'"{safe_text(clean_tok)}"', f'"{safe_text(int_tok)}"', duration]
         row_colors = [TEXT, TEXT, RED if r.top_token_changed else TEXT_MUTED, eff_color, TEXT, TEXT, TEXT_MUTED]
 
         for i, (val, width, color) in enumerate(zip(row_data, col_widths, row_colors)):
