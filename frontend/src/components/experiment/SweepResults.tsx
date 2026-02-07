@@ -1,8 +1,10 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import type { ExperimentResult } from '../../api/types';
 import { Panel } from '../common/Panel';
 import { InfoTip } from '../common/InfoTip';
+import * as api from '../../api/client';
+import { useExperimentStore } from '../../stores/experimentStore';
 
 interface Props {
   results: ExperimentResult[];
@@ -10,6 +12,8 @@ interface Props {
 
 export function SweepResults({ results }: Props) {
   const svgRef = useRef<SVGSVGElement>(null);
+  const [exporting, setExporting] = useState(false);
+  const config = useExperimentStore((s) => s.config);
 
   useEffect(() => {
     if (!svgRef.current || results.length === 0) return;
@@ -99,8 +103,30 @@ export function SweepResults({ results }: Props) {
   const maxLayer = results.find((r) => r.kl_divergence === maxKL);
   const changedCount = results.filter((r) => r.top_token_changed).length;
 
+  const handleExportPDF = async () => {
+    setExporting(true);
+    try {
+      await api.downloadSweepReport(config);
+    } catch (e) {
+      console.error('PDF export failed:', e);
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
-    <Panel title="Layer Sweep Results">
+    <Panel
+      title="Layer Sweep Results"
+      actions={
+        <button
+          onClick={handleExportPDF}
+          disabled={exporting}
+          className="rounded-lg border border-zinc-600 px-3 py-1 text-xs font-medium text-zinc-300 transition-colors hover:border-blue-500 hover:text-blue-400 disabled:opacity-40"
+        >
+          {exporting ? 'Generating...' : 'Export PDF Report'}
+        </button>
+      }
+    >
       <div className="space-y-4">
         <div className="mb-1 flex items-center gap-1.5 text-xs text-zinc-500">
           <InfoTip topic="layer_sweep">What is a layer sweep?</InfoTip>

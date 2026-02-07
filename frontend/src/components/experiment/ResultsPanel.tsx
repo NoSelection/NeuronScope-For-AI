@@ -1,15 +1,41 @@
+import { useState } from 'react';
 import type { ExperimentResult, TokenPrediction } from '../../api/types';
 import { MetricCard } from '../common/MetricCard';
 import { Panel } from '../common/Panel';
 import { InfoTip } from '../common/InfoTip';
+import * as api from '../../api/client';
 
 interface Props {
   result: ExperimentResult;
 }
 
 export function ResultsPanel({ result }: Props) {
+  const [exporting, setExporting] = useState(false);
+
+  const handleExportPDF = async () => {
+    setExporting(true);
+    try {
+      await api.downloadExperimentReport(result.id);
+    } catch (e) {
+      console.error('PDF export failed:', e);
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
-    <Panel title={`Results: ${result.config.name || result.id}`}>
+    <Panel
+      title={`Results: ${result.config.name || result.id}`}
+      actions={
+        <button
+          onClick={handleExportPDF}
+          disabled={exporting}
+          className="rounded-lg border border-zinc-600 px-3 py-1 text-xs font-medium text-zinc-300 transition-colors hover:border-blue-500 hover:text-blue-400 disabled:opacity-40"
+        >
+          {exporting ? 'Generating...' : 'Export PDF'}
+        </button>
+      }
+    >
       <div className="space-y-5">
         {/* Key Metrics */}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">

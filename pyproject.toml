@@ -23,6 +23,10 @@ dependencies = [
     # Analysis
     "einops>=0.7.0",
     "numpy>=1.24.0",
+    "matplotlib>=3.8.0",
+
+    # Reports
+    "fpdf2>=2.7.0",
 
     # Utilities
     "rich>=13.0",

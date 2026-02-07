@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useActivationStore } from '../stores/activationStore';
 import { useModelStore } from '../stores/modelStore';
 import { Panel } from '../components/common/Panel';
+import { InfoLabel, InfoTip } from '../components/common/InfoTip';
 import type { ComponentType } from '../api/types';
 import { COMPONENT_LABELS } from '../api/types';
 
@@ -49,8 +50,15 @@ export function ActivationExplorer() {
     <div className="space-y-5">
       <Panel title="Activation Explorer">
         <div className="space-y-4">
+          <div className="mb-2 rounded-lg border border-blue-500/20 bg-blue-500/5 p-3">
+            <p className="text-xs leading-relaxed text-zinc-400">
+              Activations are the numbers computed inside the model as it processes text.
+              Capture them here to inspect what the model is &quot;thinking&quot; at any layer and component.
+            </p>
+          </div>
+
           <div>
-            <label className="mb-1 block text-xs text-zinc-400">Input Text</label>
+            <InfoLabel topic="activations">Input Text</InfoLabel>
             <textarea
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
@@ -62,7 +70,7 @@ export function ActivationExplorer() {
 
           <div className="flex gap-3">
             <div className="flex-1">
-              <label className="mb-1 block text-xs text-zinc-500">Layer</label>
+              <InfoLabel topic="layer">Layer</InfoLabel>
               <select
                 value={selectedLayer}
                 onChange={(e) => setSelectedLayer(parseInt(e.target.value))}
@@ -74,7 +82,7 @@ export function ActivationExplorer() {
               </select>
             </div>
             <div className="flex-1">
-              <label className="mb-1 block text-xs text-zinc-500">Component</label>
+              <InfoLabel topic="component">Component</InfoLabel>
               <select
                 value={selectedComponent}
                 onChange={(e) => setSelectedComponent(e.target.value as ComponentType)}
@@ -123,6 +131,9 @@ export function ActivationExplorer() {
       {/* Captured Activations */}
       {captures.length > 0 && (
         <Panel title={`Captured Activations (${captures.length})`}>
+          <div className="mb-3 flex items-center gap-1.5 text-xs text-zinc-500">
+            <InfoTip topic="tensor_stats">What do these statistics mean?</InfoTip>
+          </div>
           <div className="space-y-3">
             {captures.map((cap) => (
               <div

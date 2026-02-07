@@ -92,6 +92,40 @@ export async function deleteExperiment(id: string): Promise<void> {
   await request(`/experiments/${id}`, { method: 'DELETE' });
 }
 
+// -- Reports (PDF) --
+
+export async function downloadSweepReport(
+  config: ExperimentConfig,
+  layers?: number[],
+): Promise<void> {
+  const res = await fetch(`${BASE}/reports/sweep`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ config, layers: layers ?? null }),
+  });
+  if (!res.ok) throw new Error(`Report failed: ${res.status}`);
+  const blob = await res.blob();
+  _downloadBlob(blob, 'neuronscope_sweep_report.pdf');
+}
+
+export async function downloadExperimentReport(id: string): Promise<void> {
+  const res = await fetch(`${BASE}/reports/experiment/${id}`);
+  if (!res.ok) throw new Error(`Report failed: ${res.status}`);
+  const blob = await res.blob();
+  _downloadBlob(blob, `neuronscope_experiment_${id}.pdf`);
+}
+
+function _downloadBlob(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 // -- Activations --
 
 export async function captureActivations(

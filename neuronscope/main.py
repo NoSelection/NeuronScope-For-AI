@@ -13,6 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from neuronscope.api.routes_model import router as model_router
 from neuronscope.api.routes_experiments import router as experiment_router
 from neuronscope.api.routes_activations import router as activation_router
+from neuronscope.api.routes_reports import router as report_router
 
 
 @asynccontextmanager
@@ -45,6 +46,7 @@ app.add_middleware(
 app.include_router(model_router, prefix="/api/model", tags=["model"])
 app.include_router(experiment_router, prefix="/api/experiments", tags=["experiments"])
 app.include_router(activation_router, prefix="/api/activations", tags=["activations"])
+app.include_router(report_router, prefix="/api/reports", tags=["reports"])
 
 
 @app.get("/api/health")

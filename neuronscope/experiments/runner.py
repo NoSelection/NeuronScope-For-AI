@@ -126,7 +126,24 @@ class ExperimentRunner:
         4. Compare clean vs. intervention outputs
         """
         with _gpu_lock:
-            return self._run_locked(config)
+            try:
+                return self._run_locked(config)
+            except torch.cuda.OutOfMemoryError:
+                torch.cuda.empty_cache()
+                raise RuntimeError(
+                    "GPU ran out of memory during experiment. "
+                    "Try: (1) shorter input text, (2) unload and reload the model, "
+                    "or (3) close other GPU-using applications. "
+                    "The GPU cache has been cleared automatically."
+                )
+            except RuntimeError as e:
+                if "CUDA" in str(e) or "out of memory" in str(e).lower():
+                    torch.cuda.empty_cache()
+                    raise RuntimeError(
+                        f"GPU error: {e}. The CUDA cache has been cleared. "
+                        "Try running the experiment again."
+                    )
+                raise
 
     def _run_locked(self, config: ExperimentConfig) -> ExperimentResult:
         start = time.time()
@@ -240,7 +257,16 @@ class ExperimentRunner:
             for spec in layer_config.interventions:
                 spec.target_layer = layer
 
-            result = self.run(layer_config)
-            results.append(result)
+            try:
+                result = self.run(layer_config)
+                results.append(result)
+            except RuntimeError as e:
+                if "out of memory" in str(e).lower() or "GPU" in str(e):
+                    console.print(f"  [red]OOM at layer {layer}[/red] — stopping sweep early")
+                    torch.cuda.empty_cache()
+                    if not results:
+                        raise
+                    break
+                raise
 
         return results
