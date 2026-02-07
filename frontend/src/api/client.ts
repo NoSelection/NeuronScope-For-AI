@@ -3,9 +3,14 @@ import type {
   ExperimentConfig,
   ExperimentResult,
   ExperimentSummary,
+  SweepSummary,
+  SweepDetail,
   CaptureResult,
   TokenInfo,
   Insight,
+  AttributionResult,
+  StreamMessage,
+  StoredActivation,
 } from './types';
 
 const BASE = '/api';
@@ -73,7 +78,7 @@ export async function runExperiment(
 export async function runSweep(
   config: ExperimentConfig,
   layers?: number[],
-): Promise<{ results: ExperimentResult[]; insights: Insight[] }> {
+): Promise<{ results: ExperimentResult[]; insights: Insight[]; sweep_id: string }> {
   return request('/experiments/sweep', {
     method: 'POST',
     body: JSON.stringify({ config, layers: layers ?? null }),
@@ -92,6 +97,30 @@ export async function deleteExperiment(id: string): Promise<void> {
   await request(`/experiments/${id}`, { method: 'DELETE' });
 }
 
+// -- Sweeps --
+
+export async function listSweeps(): Promise<SweepSummary[]> {
+  return request('/experiments/sweeps');
+}
+
+export async function getSweep(id: string): Promise<SweepDetail> {
+  return request(`/experiments/sweeps/${id}`);
+}
+
+export async function deleteSweep(id: string): Promise<void> {
+  await request(`/experiments/sweeps/${id}`, { method: 'DELETE' });
+}
+
+export async function downloadSweepReportById(id: string): Promise<void> {
+  const res = await fetch(`${BASE}/reports/sweep/${id}`);
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(typeof body.detail === 'string' ? body.detail : `Report failed: ${res.status}`);
+  }
+  const blob = await res.blob();
+  _downloadBlob(blob, `neuronscope_sweep_${id}.pdf`);
+}
+
 // -- Reports (PDF) --
 
 export async function downloadSweepReport(
@@ -103,14 +132,20 @@ export async function downloadSweepReport(
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ config, layers: layers ?? null }),
   });
-  if (!res.ok) throw new Error(`Report failed: ${res.status}`);
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(typeof body.detail === 'string' ? body.detail : `Report failed: ${res.status}`);
+  }
   const blob = await res.blob();
   _downloadBlob(blob, 'neuronscope_sweep_report.pdf');
 }
 
 export async function downloadExperimentReport(id: string): Promise<void> {
   const res = await fetch(`${BASE}/reports/experiment/${id}`);
-  if (!res.ok) throw new Error(`Report failed: ${res.status}`);
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(typeof body.detail === 'string' ? body.detail : `Report failed: ${res.status}`);
+  }
   const blob = await res.blob();
   _downloadBlob(blob, `neuronscope_experiment_${id}.pdf`);
 }
@@ -131,9 +166,76 @@ function _downloadBlob(blob: Blob, filename: string) {
 export async function captureActivations(
   inputText: string,
   targets: Array<Record<string, unknown>>,
+  save = false,
+  experimentId?: string,
 ): Promise<CaptureResult[]> {
   return request('/activations/capture', {
     method: 'POST',
-    body: JSON.stringify({ input_text: inputText, targets }),
+    body: JSON.stringify({
+      input_text: inputText,
+      targets,
+      save,
+      experiment_id: experimentId ?? null,
+    }),
   });
+}
+
+// -- Stored Activations --
+
+export async function listStoredActivations(): Promise<StoredActivation[]> {
+  return request('/activations/stored');
+}
+
+export async function getStoredActivation(id: string): Promise<StoredActivation> {
+  return request(`/activations/stored/${id}`);
+}
+
+export async function deleteStoredActivation(id: string): Promise<void> {
+  await request(`/activations/stored/${id}`, { method: 'DELETE' });
+}
+
+// -- Attribution --
+
+export async function runAttribution(
+  baseInput: string,
+  interventionType = 'zero',
+  component = 'mlp_output',
+  layers?: number[],
+): Promise<AttributionResult> {
+  return request('/analysis/attribution', {
+    method: 'POST',
+    body: JSON.stringify({
+      base_input: baseInput,
+      intervention_type: interventionType,
+      component,
+      layers: layers ?? null,
+    }),
+  });
+}
+
+// -- WebSocket Streaming --
+
+export function streamActivations(
+  inputText: string,
+  targets: Array<Record<string, unknown>>,
+  onMessage: (msg: StreamMessage) => void,
+  onError?: (error: Event) => void,
+): WebSocket {
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const ws = new WebSocket(`${protocol}//${window.location.host}/api/ws/stream`);
+
+  ws.onopen = () => {
+    ws.send(JSON.stringify({ input_text: inputText, targets }));
+  };
+
+  ws.onmessage = (event) => {
+    const msg: StreamMessage = JSON.parse(event.data);
+    onMessage(msg);
+  };
+
+  ws.onerror = (event) => {
+    onError?.(event);
+  };
+
+  return ws;
 }

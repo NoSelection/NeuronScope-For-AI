@@ -3,6 +3,8 @@ import { useActivationStore } from '../stores/activationStore';
 import { useModelStore } from '../stores/modelStore';
 import { Panel } from '../components/common/Panel';
 import { InfoLabel, InfoTip } from '../components/common/InfoTip';
+import { ActivationHeatmap } from '../components/activation/ActivationHeatmap';
+import { DistributionPlot } from '../components/activation/DistributionPlot';
 import type { ComponentType } from '../api/types';
 import { COMPONENT_LABELS } from '../api/types';
 
@@ -15,7 +17,7 @@ const CAPTURABLE: ComponentType[] = [
 
 export function ActivationExplorer() {
   const { loaded, info } = useModelStore();
-  const { captures, loading, error, captureActivations, clear } = useActivationStore();
+  const { captures, loading, streaming, streamProgress, error, captureActivations, streamActivations, clear } = useActivationStore();
   const [inputText, setInputText] = useState('');
   const [selectedLayer, setSelectedLayer] = useState(0);
   const [selectedComponent, setSelectedComponent] = useState<ComponentType>('residual_post');
@@ -44,6 +46,15 @@ export function ActivationExplorer() {
       component: selectedComponent,
     }));
     captureActivations(inputText, targets);
+  };
+
+  const handleStream = () => {
+    if (!inputText.trim()) return;
+    const targets = Array.from({ length: numLayers }, (_, i) => ({
+      layer: i,
+      component: selectedComponent,
+    }));
+    streamActivations(inputText, targets);
   };
 
   return (
@@ -105,10 +116,17 @@ export function ActivationExplorer() {
             </button>
             <button
               onClick={handleCaptureAllLayers}
-              disabled={loading || !inputText.trim()}
+              disabled={loading || streaming || !inputText.trim()}
               className="rounded-lg border border-zinc-600 px-4 py-2 text-sm font-medium text-zinc-300 hover:bg-zinc-800 disabled:opacity-40"
             >
               Capture All Layers
+            </button>
+            <button
+              onClick={handleStream}
+              disabled={loading || streaming || !inputText.trim()}
+              className="rounded-lg border border-emerald-600/50 bg-emerald-600/10 px-4 py-2 text-sm font-medium text-emerald-400 hover:bg-emerald-600/20 disabled:opacity-40"
+            >
+              {streaming ? `Streaming (${streamProgress})...` : 'Stream All Layers'}
             </button>
             {captures.length > 0 && (
               <button
@@ -153,6 +171,8 @@ export function ActivationExplorer() {
                   <StatItem label="Max" value={cap.stats.max.toFixed(4)} />
                   <StatItem label="Norm" value={cap.stats.norm.toFixed(2)} />
                 </div>
+                {cap.values && <ActivationHeatmap capture={cap} />}
+                {cap.values && <DistributionPlot values={cap.values} label={`Distribution: ${cap.target_key}`} />}
               </div>
             ))}
           </div>

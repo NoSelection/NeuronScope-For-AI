@@ -1,10 +1,14 @@
+import { useState } from 'react';
 import { useModelStore } from '../../stores/modelStore';
 import { Panel } from '../common/Panel';
 import { InfoTip } from '../common/InfoTip';
+import { ModuleTree } from './ModuleTree';
+import { LayerDiagram } from './LayerDiagram';
 import type { EducationKey } from '../../education/content';
 
 export function ModelInfoPanel() {
   const { info, loaded, loading, error, loadModel, unloadModel } = useModelStore();
+  const [selectedLayer, setSelectedLayer] = useState(0);
 
   if (!loaded) {
     return (
@@ -49,6 +53,8 @@ export function ModelInfoPanel() {
         )}
         {info!.has_vision && <Stat label="Vision" value="Yes" />}
       </div>
+      <ModuleTree />
+      <LayerDiagram selectedLayer={selectedLayer} onSelectLayer={setSelectedLayer} />
     </Panel>
   );
 }

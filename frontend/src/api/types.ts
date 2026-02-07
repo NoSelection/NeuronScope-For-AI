@@ -149,3 +149,56 @@ export interface Insight {
   title: string;
   detail: string;
 }
+
+export interface SweepSummary {
+  id: string;
+  name: string;
+  num_layers: number;
+  peak_kl: number;
+  peak_layer: number;
+  layers_changed: number;
+  timestamp: string;
+}
+
+export interface SweepDetail extends SweepSummary {
+  config: ExperimentConfig;
+  results: ExperimentResult[];
+  insights: Insight[];
+}
+
+// -- WebSocket Streaming --
+
+export interface StreamMessage {
+  type: 'connected' | 'activation' | 'done' | 'error';
+  target_key?: string;
+  shape?: number[];
+  stats?: TensorStats;
+  values?: number[];
+  count?: number;
+  detail?: string;
+}
+
+// -- Attribution --
+
+export interface AttributionResult {
+  layers: number[];
+  kl_scores: number[];
+  effect_sizes: number[];
+  peak_layer: number;
+  peak_kl: number;
+  total_effect: number;
+  component: string;
+  intervention_type: string;
+}
+
+// -- Stored Activations --
+
+export interface StoredActivation {
+  id: string;
+  experiment_id: string | null;
+  target_key: string;
+  shape: number[];
+  stats: TensorStats;
+  values?: number[];
+  created_at: string;
+}

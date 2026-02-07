@@ -88,6 +88,24 @@ class TestHookTarget:
         name = target.to_module_name(module_map)
         assert "10" in name
 
+    def test_to_module_name_attention_pattern_gemma3(self):
+        """Test ATTENTION_PATTERN resolves to self_attn module."""
+        target = HookTarget(layer=7, component=ComponentType.ATTENTION_PATTERN)
+        module_map = {
+            "model.language_model.layers.7.self_attn": "mock_module",
+        }
+        name = target.to_module_name(module_map)
+        assert name == "model.language_model.layers.7.self_attn"
+
+    def test_to_module_name_attention_pattern_standard(self):
+        """Test ATTENTION_PATTERN resolves for standard architecture."""
+        target = HookTarget(layer=3, component=ComponentType.ATTENTION_PATTERN)
+        module_map = {
+            "model.layers.3.self_attn": "mock_module",
+        }
+        name = target.to_module_name(module_map)
+        assert name == "model.layers.3.self_attn"
+
     def test_to_module_name_missing_raises(self):
         target = HookTarget(layer=99, component=ComponentType.MLP_OUTPUT)
         with pytest.raises((KeyError, ValueError)):

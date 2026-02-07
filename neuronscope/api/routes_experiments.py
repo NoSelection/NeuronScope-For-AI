@@ -11,10 +11,12 @@ from neuronscope.experiments.runner import ExperimentRunner
 from neuronscope.hooks.manager import HookManager
 from neuronscope.models.registry import ModelRegistry
 from neuronscope.store.experiment_store import ExperimentStore
+from neuronscope.store.sweep_store import SweepStore
 from neuronscope.analysis.insights import generate_insights, generate_sweep_insights
 
 router = APIRouter()
 store = ExperimentStore()
+sweep_store = SweepStore()
 
 
 class SweepRequest(BaseModel):
@@ -37,7 +39,10 @@ async def run_experiment(config: ExperimentConfig) -> dict:
     runner = _get_runner()
 
     loop = asyncio.get_event_loop()
-    result = await loop.run_in_executor(None, partial(runner.run, config))
+    try:
+        result = await loop.run_in_executor(None, partial(runner.run, config))
+    except (ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
 
     await store.save(result)
     insights = generate_insights(result)
@@ -50,13 +55,52 @@ async def run_sweep(request: SweepRequest) -> dict:
     runner = _get_runner()
 
     loop = asyncio.get_event_loop()
-    results = await loop.run_in_executor(
-        None, partial(runner.run_sweep, request.config, request.layers)
-    )
+    try:
+        results = await loop.run_in_executor(
+            None, partial(runner.run_sweep, request.config, request.layers)
+        )
+    except (ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
 
     await store.save_many(results)
+    sweep_id = await sweep_store.save(
+        request.config.name or "Untitled Sweep", request.config, results
+    )
     insights = generate_sweep_insights(results)
-    return {"results": results, "insights": insights}
+    return {"results": results, "insights": insights, "sweep_id": sweep_id}
+
+
+@router.get("/sweeps")
+async def list_sweeps() -> list[dict]:
+    """List all sweep summaries."""
+    return await sweep_store.list_all()
+
+
+@router.get("/sweeps/{sweep_id}")
+async def get_sweep(sweep_id: str) -> dict:
+    """Get a sweep with full results."""
+    sweep = await sweep_store.get(sweep_id)
+    if sweep is None:
+        raise HTTPException(status_code=404, detail="Sweep not found")
+
+    # Fetch full experiment results
+    results = []
+    for exp_id in sweep["experiment_ids"]:
+        result = await store.get(exp_id)
+        if result is not None:
+            results.append(result)
+
+    insights = generate_sweep_insights(results) if results else []
+    return {**sweep, "results": results, "insights": insights}
+
+
+@router.delete("/sweeps/{sweep_id}")
+async def delete_sweep(sweep_id: str) -> dict:
+    """Delete a sweep and its experiments."""
+    deleted = await sweep_store.delete(sweep_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Sweep not found")
+    return {"status": "deleted"}
 
 
 @router.get("/")

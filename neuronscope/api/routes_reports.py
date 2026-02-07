@@ -16,9 +16,11 @@ from neuronscope.models.registry import ModelRegistry
 from neuronscope.reports.sweep_report import generate_sweep_pdf
 from neuronscope.reports.experiment_report import generate_experiment_pdf
 from neuronscope.store.experiment_store import ExperimentStore
+from neuronscope.store.sweep_store import SweepStore
 
 router = APIRouter()
 store = ExperimentStore()
+sweep_store = SweepStore()
 
 
 class SweepReportRequest(BaseModel):
@@ -40,9 +42,12 @@ async def sweep_report(request: SweepReportRequest):
     runner = _get_runner()
 
     loop = asyncio.get_event_loop()
-    results = await loop.run_in_executor(
-        None, partial(runner.run_sweep, request.config, request.layers)
-    )
+    try:
+        results = await loop.run_in_executor(
+            None, partial(runner.run_sweep, request.config, request.layers)
+        )
+    except (ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
 
     await store.save_many(results)
     pdf_bytes = bytes(generate_sweep_pdf(results))
@@ -62,7 +67,10 @@ async def experiment_report_from_config(config: ExperimentConfig):
     runner = _get_runner()
 
     loop = asyncio.get_event_loop()
-    result = await loop.run_in_executor(None, partial(runner.run, config))
+    try:
+        result = await loop.run_in_executor(None, partial(runner.run, config))
+    except (ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
 
     await store.save(result)
     pdf_bytes = bytes(generate_experiment_pdf(result))
@@ -72,6 +80,33 @@ async def experiment_report_from_config(config: ExperimentConfig):
         media_type="application/pdf",
         headers={
             "Content-Disposition": f'attachment; filename="neuronscope_experiment_{result.id}.pdf"',
+        },
+    )
+
+
+@router.get("/sweep/{sweep_id}")
+async def sweep_report_from_id(sweep_id: str):
+    """Generate a PDF report from a previously saved sweep (no re-running)."""
+    sweep = await sweep_store.get(sweep_id)
+    if sweep is None:
+        raise HTTPException(status_code=404, detail="Sweep not found")
+
+    results = []
+    for exp_id in sweep["experiment_ids"]:
+        result = await store.get(exp_id)
+        if result is not None:
+            results.append(result)
+
+    if not results:
+        raise HTTPException(status_code=404, detail="No experiment results found for this sweep")
+
+    pdf_bytes = bytes(generate_sweep_pdf(results))
+
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="neuronscope_sweep_{sweep_id}.pdf"',
         },
     )
 

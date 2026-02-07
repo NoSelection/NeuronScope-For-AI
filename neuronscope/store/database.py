@@ -17,6 +17,30 @@ CREATE TABLE IF NOT EXISTS experiments (
 
 CREATE INDEX IF NOT EXISTS idx_experiments_hash ON experiments(config_hash);
 CREATE INDEX IF NOT EXISTS idx_experiments_name ON experiments(name);
+
+CREATE TABLE IF NOT EXISTS sweeps (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    config_json TEXT NOT NULL,
+    experiment_ids TEXT NOT NULL,
+    num_layers INTEGER NOT NULL,
+    peak_kl REAL NOT NULL,
+    peak_layer INTEGER NOT NULL,
+    layers_changed INTEGER NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS activations (
+    id TEXT PRIMARY KEY,
+    experiment_id TEXT,
+    target_key TEXT NOT NULL,
+    shape_json TEXT NOT NULL,
+    stats_json TEXT NOT NULL,
+    tensor_blob BLOB NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_activations_experiment ON activations(experiment_id);
 """
 
 

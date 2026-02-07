@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { ExperimentWorkbench } from './views/ExperimentWorkbench';
 import { ActivationExplorer } from './views/ActivationExplorer';
+import { SweepHistory } from './views/SweepHistory';
+import { ComparisonView } from './components/experiment/ComparisonView';
 import { WalkthroughOverlay } from './components/common/WalkthroughOverlay';
 import { WelcomeBanner } from './components/common/WelcomeBanner';
 import { useWalkthroughStore } from './stores/walkthroughStore';
 
-type View = 'workbench' | 'activations';
+type View = 'workbench' | 'activations' | 'sweeps' | 'comparison';
 
 function App() {
   const [view, setView] = useState<View>('workbench');
@@ -39,6 +41,18 @@ function App() {
             >
               Activation Explorer
             </NavButton>
+            <NavButton
+              active={view === 'sweeps'}
+              onClick={() => setView('sweeps')}
+            >
+              Sweeps
+            </NavButton>
+            <NavButton
+              active={view === 'comparison'}
+              onClick={() => setView('comparison')}
+            >
+              Compare
+            </NavButton>
             {dismissed && (
               <button
                 onClick={startTour}
@@ -61,6 +75,8 @@ function App() {
           </>
         )}
         {view === 'activations' && <ActivationExplorer />}
+        {view === 'sweeps' && <SweepHistory />}
+        {view === 'comparison' && <ComparisonView />}
       </main>
     </div>
   );
