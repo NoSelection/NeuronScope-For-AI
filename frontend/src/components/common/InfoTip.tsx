@@ -77,7 +77,7 @@ export function InfoTip({ topic, children, iconOnly }: InfoTipProps) {
                 <p className="text-[11px] leading-relaxed text-zinc-300">
                   {entry.long}
                 </p>
-                {entry.analogy && (
+                {'analogy' in entry && entry.analogy && (
                   <p className="text-[11px] italic leading-relaxed text-zinc-400">
                     Analogy: {entry.analogy}
                   </p>
