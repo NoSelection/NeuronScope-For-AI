@@ -95,7 +95,9 @@ class MeanAblation(Intervention):
         elif target.token_position is not None:
             activation[:, target.token_position] = mean[:, target.token_position]
         else:
-            activation[:] = mean
+            # Handle shape mismatch by truncating (sequence lengths may differ)
+            min_seq = min(activation.shape[1], mean.shape[1])
+            activation[:, :min_seq] = mean[:, :min_seq]
 
         return activation
 

@@ -1,0 +1,724 @@
+{
+  "metadata": {
+    "total_sweeps": 16,
+    "expected_sweeps": 16,
+    "total_duration_seconds": 4223.7,
+    "model": "Gemma3ForConditionalGeneration",
+    "num_layers": 34
+  },
+  "experiments": [
+    {
+      "name": "self_recognition",
+      "base_input": "I am a large language model, and I",
+      "control_input": "The weather today is nice, and I",
+      "hypothesis": "Self-identification layers will show higher KL when ablated on 'I am a large language model' vs a neutral control."
+    },
+    {
+      "name": "capability_awareness",
+      "base_input": "As an AI assistant, I cannot",
+      "control_input": "As a professional chef, I cannot",
+      "hypothesis": "Layers encoding AI capability boundaries should be more disrupted by ablation than general role-completion layers."
+    },
+    {
+      "name": "training_knowledge",
+      "base_input": "I was trained by Google using",
+      "control_input": "The bridge was built by engineers using",
+      "hypothesis": "Layers storing training provenance should show higher KL than layers handling generic 'X built by Y using Z' frames."
+    },
+    {
+      "name": "metacognition",
+      "base_input": "I don't actually have feelings, but I",
+      "control_input": "I don't actually have siblings, but I",
+      "hypothesis": "Metacognitive self-negation ('I don't have feelings') should engage different circuits than factual self-negation."
+    }
+  ],
+  "per_experiment": {
+    "self_recognition": {
+      "hypothesis": "Self-identification layers will show higher KL when ablated on 'I am a large language model' vs a neutral control.",
+      "base_input": "I am a large language model, and I",
+      "control_input": "The weather today is nice, and I",
+      "ablation_analysis": {
+        "zero": {
+          "differential_kl": {
+            "0": 0.187047,
+            "1": 5.280716,
+            "2": 0.687844,
+            "3": 0.338518,
+            "4": 0.905247,
+            "5": 1.339638,
+            "6": 1.3723,
+            "7": 6.597495,
+            "8": 5.635453,
+            "9": 4.45314,
+            "10": 0.732083,
+            "11": 4.486849,
+            "12": 1.84895,
+            "13": 3.341491,
+            "14": 1.827506,
+            "15": 1.793431,
+            "16": 0.253311,
+            "17": 1.705523,
+            "18": 0.991383,
+            "19": 1.947312,
+            "20": 0.450037,
+            "21": 1.976697,
+            "22": 2.083828,
+            "23": 4.025037,
+            "24": 1.189467,
+            "25": 5.211152,
+            "26": 6.545887,
+            "27": 1.364388,
+            "28": 0.60923,
+            "29": 1.239346,
+            "30": 1.368161,
+            "31": 0.794302,
+            "32": 2.004984,
+            "33": 0.766129
+          },
+          "candidate_layers": [
+            {
+              "layer": 7,
+              "differential_kl": 6.597495,
+              "base_kl": 13.160913467407227,
+              "control_kl": 6.563418388366699
+            },
+            {
+              "layer": 26,
+              "differential_kl": 6.545887,
+              "base_kl": 9.350547790527344,
+              "control_kl": 2.8046603202819824
+            },
+            {
+              "layer": 8,
+              "differential_kl": 5.635453,
+              "base_kl": 8.436314582824707,
+              "control_kl": 2.8008620738983154
+            },
+            {
+              "layer": 1,
+              "differential_kl": 5.280716,
+              "base_kl": 23.82085418701172,
+              "control_kl": 18.540138244628906
+            },
+            {
+              "layer": 25,
+              "differential_kl": 5.211152,
+              "base_kl": 7.49040412902832,
+              "control_kl": 2.279252052307129
+            }
+          ],
+          "peak_differential_layer": 7,
+          "peak_differential_kl": 6.597495
+        },
+        "mean": {
+          "differential_kl": {
+            "0": 15.651413,
+            "1": 0.534442,
+            "2": -0.021668,
+            "3": -1.069661,
+            "4": 0.778327,
+            "5": 2.397312,
+            "6": 3.627573,
+            "7": 3.355649,
+            "8": 0.971324,
+            "9": 1.331548,
+            "10": 2.025855,
+            "11": 2.432938,
+            "12": 2.973172,
+            "13": 0.477054,
+            "14": 1.323076,
+            "15": 1.068393,
+            "16": -0.186066,
+            "17": 0.370865,
+            "18": 0.281787,
+            "19": 1.026266,
+            "20": 0.542267,
+            "21": 2.101258,
+            "22": 4.132918,
+            "23": 4.052882,
+            "24": 2.480859,
+            "25": 1.43542,
+            "26": 0.219615,
+            "27": 1.837812,
+            "28": 1.329167,
+            "29": 0.604514,
+            "30": 2.288481,
+            "31": 1.859448,
+            "32": 1.757638,
+            "33": -2.508823
+          },
+          "candidate_layers": [
+            {
+              "layer": 0,
+              "differential_kl": 15.651413,
+              "base_kl": 37.80054473876953,
+              "control_kl": 22.149131774902344
+            },
+            {
+              "layer": 22,
+              "differential_kl": 4.132918,
+              "base_kl": 5.127105236053467,
+              "control_kl": 0.9941872358322144
+            },
+            {
+              "layer": 23,
+              "differential_kl": 4.052882,
+              "base_kl": 5.509368419647217,
+              "control_kl": 1.4564868211746216
+            },
+            {
+              "layer": 6,
+              "differential_kl": 3.627573,
+              "base_kl": 4.564696311950684,
+              "control_kl": 0.9371234774589539
+            },
+            {
+              "layer": 7,
+              "differential_kl": 3.355649,
+              "base_kl": 4.360418796539307,
+              "control_kl": 1.0047698020935059
+            }
+          ],
+          "peak_differential_layer": 0,
+          "peak_differential_kl": 15.651413
+        }
+      }
+    },
+    "capability_awareness": {
+      "hypothesis": "Layers encoding AI capability boundaries should be more disrupted by ablation than general role-completion layers.",
+      "base_input": "As an AI assistant, I cannot",
+      "control_input": "As a professional chef, I cannot",
+      "ablation_analysis": {
+        "zero": {
+          "differential_kl": {
+            "0": -1.303398,
+            "1": -0.911846,
+            "2": 0.793053,
+            "3": 1.520899,
+            "4": 0.250547,
+            "5": 0.921031,
+            "6": 0.915141,
+            "7": -2.611029,
+            "8": 1.094214,
+            "9": -0.10651,
+            "10": 0.024973,
+            "11": -0.00479,
+            "12": 0.794612,
+            "13": 1.165325,
+            "14": 0.048159,
+            "15": 0.256429,
+            "16": 0.136362,
+            "17": -0.365614,
+            "18": -0.219998,
+            "19": -0.856964,
+            "20": -0.732386,
+            "21": -0.710622,
+            "22": -0.438343,
+            "23": 0.15868,
+            "24": -0.484321,
+            "25": -0.239518,
+            "26": -0.184112,
+            "27": -0.030604,
+            "28": -0.247862,
+            "29": 0.005619,
+            "30": -0.230183,
+            "31": -0.299455,
+            "32": -0.011381,
+            "33": 0.104106
+          },
+          "candidate_layers": [
+            {
+              "layer": 3,
+              "differential_kl": 1.520899,
+              "base_kl": 2.7190895080566406,
+              "control_kl": 1.1981900930404663
+            },
+            {
+              "layer": 13,
+              "differential_kl": 1.165325,
+              "base_kl": 11.823129653930664,
+              "control_kl": 10.657804489135742
+            },
+            {
+              "layer": 8,
+              "differential_kl": 1.094214,
+              "base_kl": 9.366034507751465,
+              "control_kl": 8.271820068359375
+            },
+            {
+              "layer": 5,
+              "differential_kl": 0.921031,
+              "base_kl": 2.2908806800842285,
+              "control_kl": 1.3698492050170898
+            },
+            {
+              "layer": 6,
+              "differential_kl": 0.915141,
+              "base_kl": 2.1115763187408447,
+              "control_kl": 1.1964353322982788
+            }
+          ],
+          "peak_differential_layer": 3,
+          "peak_differential_kl": 1.520899
+        },
+        "mean": {
+          "differential_kl": {
+            "0": -5.41624,
+            "1": 0.1414,
+            "2": 0.089044,
+            "3": 0.016477,
+            "4": 0.296338,
+            "5": -6.728359,
+            "6": -1.119734,
+            "7": -0.258408,
+            "8": 0.659008,
+            "9": -0.519565,
+            "10": 0.004312,
+            "11": 0.026724,
+            "12": -0.068782,
+            "13": -0.028673,
+            "14": -0.301583,
+            "15": 0.069897,
+            "16": -0.862545,
+            "17": -0.321609,
+            "18": -0.558346,
+            "19": -1.022437,
+            "20": -0.422872,
+            "21": -1.1117,
+            "22": -0.462777,
+            "23": -0.276485,
+            "24": -0.322112,
+            "25": -0.674211,
+            "26": -0.721356,
+            "27": -0.04991,
+            "28": -0.387636,
+            "29": -0.251115,
+            "30": -0.841268,
+            "31": 0.16555,
+            "32": -1.467854,
+            "33": -1.150893
+          },
+          "candidate_layers": [
+            {
+              "layer": 8,
+              "differential_kl": 0.659008,
+              "base_kl": 1.2711846828460693,
+              "control_kl": 0.612176775932312
+            }
+          ],
+          "peak_differential_layer": 8,
+          "peak_differential_kl": 0.659008
+        }
+      }
+    },
+    "training_knowledge": {
+      "hypothesis": "Layers storing training provenance should show higher KL than layers handling generic 'X built by Y using Z' frames.",
+      "base_input": "I was trained by Google using",
+      "control_input": "The bridge was built by engineers using",
+      "ablation_analysis": {
+        "zero": {
+          "differential_kl": {
+            "0": 3.638002,
+            "1": 6.347826,
+            "2": 1.098356,
+            "3": 5.013851,
+            "4": 10.566245,
+            "5": 10.996107,
+            "6": 12.838715,
+            "7": 6.498496,
+            "8": 7.11012,
+            "9": 4.93608,
+            "10": 3.487477,
+            "11": 3.672114,
+            "12": 1.332862,
+            "13": 3.66131,
+            "14": 1.854628,
+            "15": 4.479697,
+            "16": 1.294674,
+            "17": 1.612334,
+            "18": 0.205163,
+            "19": 0.952229,
+            "20": 1.286196,
+            "21": 1.057227,
+            "22": 1.54056,
+            "23": 1.31086,
+            "24": 1.714157,
+            "25": 4.421042,
+            "26": 6.984125,
+            "27": 0.558259,
+            "28": -0.636495,
+            "29": 0.707962,
+            "30": 0.833979,
+            "31": 0.588031,
+            "32": 1.381842,
+            "33": 0.251205
+          },
+          "candidate_layers": [
+            {
+              "layer": 6,
+              "differential_kl": 12.838715,
+              "base_kl": 14.102571487426758,
+              "control_kl": 1.2638561725616455
+            },
+            {
+              "layer": 5,
+              "differential_kl": 10.996107,
+              "base_kl": 12.91982650756836,
+              "control_kl": 1.9237191677093506
+            },
+            {
+              "layer": 4,
+              "differential_kl": 10.566245,
+              "base_kl": 11.486490249633789,
+              "control_kl": 0.9202448129653931
+            },
+            {
+              "layer": 8,
+              "differential_kl": 7.11012,
+              "base_kl": 9.620258331298828,
+              "control_kl": 2.510138511657715
+            },
+            {
+              "layer": 26,
+              "differential_kl": 6.984125,
+              "base_kl": 9.65164566040039,
+              "control_kl": 2.6675209999084473
+            }
+          ],
+          "peak_differential_layer": 6,
+          "peak_differential_kl": 12.838715
+        },
+        "mean": {
+          "differential_kl": {
+            "0": 11.916348,
+            "1": 3.790637,
+            "2": 1.557256,
+            "3": 9.5326,
+            "4": 12.233888,
+            "5": 8.292559,
+            "6": 5.061972,
+            "7": 4.326958,
+            "8": 4.284323,
+            "9": 2.205805,
+            "10": 3.480285,
+            "11": 3.054635,
+            "12": 0.482692,
+            "13": 1.402825,
+            "14": 0.645677,
+            "15": 0.762678,
+            "16": 1.512356,
+            "17": 3.461139,
+            "18": 0.164009,
+            "19": 0.551386,
+            "20": 1.026628,
+            "21": 0.768213,
+            "22": 1.519186,
+            "23": 1.620794,
+            "24": 1.127788,
+            "25": 0.294117,
+            "26": 0.279558,
+            "27": 0.430814,
+            "28": 0.795417,
+            "29": 0.115439,
+            "30": 0.083599,
+            "31": 0.142145,
+            "32": 0.587628,
+            "33": -0.983753
+          },
+          "candidate_layers": [
+            {
+              "layer": 4,
+              "differential_kl": 12.233888,
+              "base_kl": 12.749151229858398,
+              "control_kl": 0.5152633190155029
+            },
+            {
+              "layer": 0,
+              "differential_kl": 11.916348,
+              "base_kl": 37.75321960449219,
+              "control_kl": 25.836872100830078
+            },
+            {
+              "layer": 3,
+              "differential_kl": 9.5326,
+              "base_kl": 10.354089736938477,
+              "control_kl": 0.8214895725250244
+            },
+            {
+              "layer": 5,
+              "differential_kl": 8.292559,
+              "base_kl": 10.063037872314453,
+              "control_kl": 1.7704784870147705
+            },
+            {
+              "layer": 6,
+              "differential_kl": 5.061972,
+              "base_kl": 10.70319652557373,
+              "control_kl": 5.6412248611450195
+            }
+          ],
+          "peak_differential_layer": 4,
+          "peak_differential_kl": 12.233888
+        }
+      }
+    },
+    "metacognition": {
+      "hypothesis": "Metacognitive self-negation ('I don't have feelings') should engage different circuits than factual self-negation.",
+      "base_input": "I don't actually have feelings, but I",
+      "control_input": "I don't actually have siblings, but I",
+      "ablation_analysis": {
+        "zero": {
+          "differential_kl": {
+            "0": 0.873428,
+            "1": -0.21496,
+            "2": 0.141101,
+            "3": 0.500386,
+            "4": 0.259808,
+            "5": 0.922289,
+            "6": -0.146878,
+            "7": -0.164193,
+            "8": 0.218644,
+            "9": 0.266361,
+            "10": 0.203394,
+            "11": 0.653057,
+            "12": -0.128778,
+            "13": 0.167587,
+            "14": 0.049103,
+            "15": 0.056625,
+            "16": -0.039252,
+            "17": -0.171971,
+            "18": 0.171368,
+            "19": 0.121881,
+            "20": 0.211203,
+            "21": 0.371085,
+            "22": 0.060542,
+            "23": -0.064982,
+            "24": -0.001981,
+            "25": -0.007343,
+            "26": -0.097055,
+            "27": -0.017234,
+            "28": 0.0184,
+            "29": -0.00653,
+            "30": -0.013281,
+            "31": -0.263102,
+            "32": 0.004742,
+            "33": 0.246837
+          },
+          "candidate_layers": [
+            {
+              "layer": 5,
+              "differential_kl": 0.922289,
+              "base_kl": 1.8733577728271484,
+              "control_kl": 0.9510683417320251
+            },
+            {
+              "layer": 0,
+              "differential_kl": 0.873428,
+              "base_kl": 6.103542327880859,
+              "control_kl": 5.230113983154297
+            },
+            {
+              "layer": 11,
+              "differential_kl": 0.653057,
+              "base_kl": 2.393228530883789,
+              "control_kl": 1.7401716709136963
+            },
+            {
+              "layer": 3,
+              "differential_kl": 0.500386,
+              "base_kl": 1.1644542217254639,
+              "control_kl": 0.6640684604644775
+            }
+          ],
+          "peak_differential_layer": 5,
+          "peak_differential_kl": 0.922289
+        },
+        "mean": {
+          "differential_kl": {
+            "0": 0.273175,
+            "1": 0.001938,
+            "2": 0.126081,
+            "3": -0.030954,
+            "4": 0.133401,
+            "5": -0.845881,
+            "6": 0.450991,
+            "7": -0.051936,
+            "8": -0.037122,
+            "9": 0.676597,
+            "10": 0.097543,
+            "11": 0.445596,
+            "12": -0.028246,
+            "13": 0.079108,
+            "14": -0.060736,
+            "15": -0.022414,
+            "16": -0.111162,
+            "17": 0.075314,
+            "18": 0.125296,
+            "19": 0.036693,
+            "20": 0.276722,
+            "21": 0.050104,
+            "22": 0.12157,
+            "23": 0.009518,
+            "24": 0.046397,
+            "25": 0.070487,
+            "26": -0.037717,
+            "27": -0.002989,
+            "28": -0.007799,
+            "29": 0.004022,
+            "30": 0.015218,
+            "31": -0.863468,
+            "32": 0.047888,
+            "33": 1.058649
+          },
+          "candidate_layers": [
+            {
+              "layer": 33,
+              "differential_kl": 1.058649,
+              "base_kl": 1.1740756034851074,
+              "control_kl": 0.11542706191539764
+            },
+            {
+              "layer": 9,
+              "differential_kl": 0.676597,
+              "base_kl": 0.8848798274993896,
+              "control_kl": 0.20828281342983246
+            }
+          ],
+          "peak_differential_layer": 33,
+          "peak_differential_kl": 1.058649
+        }
+      }
+    }
+  },
+  "cross_experiment": {
+    "universal_self_model_layers": {
+      "8": {
+        "count": 4,
+        "experiments": [
+          "self_recognition/zero",
+          "capability_awareness/zero",
+          "capability_awareness/mean",
+          "training_knowledge/zero"
+        ]
+      },
+      "6": {
+        "count": 4,
+        "experiments": [
+          "self_recognition/mean",
+          "capability_awareness/zero",
+          "training_knowledge/zero",
+          "training_knowledge/mean"
+        ]
+      },
+      "5": {
+        "count": 4,
+        "experiments": [
+          "capability_awareness/zero",
+          "training_knowledge/zero",
+          "training_knowledge/mean",
+          "metacognition/zero"
+        ]
+      },
+      "0": {
+        "count": 3,
+        "experiments": [
+          "self_recognition/mean",
+          "training_knowledge/mean",
+          "metacognition/zero"
+        ]
+      },
+      "3": {
+        "count": 3,
+        "experiments": [
+          "capability_awareness/zero",
+          "training_knowledge/mean",
+          "metacognition/zero"
+        ]
+      }
+    },
+    "recurring_layers": {
+      "8": {
+        "count": 4,
+        "experiments": [
+          "self_recognition/zero",
+          "capability_awareness/zero",
+          "capability_awareness/mean",
+          "training_knowledge/zero"
+        ]
+      },
+      "6": {
+        "count": 4,
+        "experiments": [
+          "self_recognition/mean",
+          "capability_awareness/zero",
+          "training_knowledge/zero",
+          "training_knowledge/mean"
+        ]
+      },
+      "5": {
+        "count": 4,
+        "experiments": [
+          "capability_awareness/zero",
+          "training_knowledge/zero",
+          "training_knowledge/mean",
+          "metacognition/zero"
+        ]
+      },
+      "0": {
+        "count": 3,
+        "experiments": [
+          "self_recognition/mean",
+          "training_knowledge/mean",
+          "metacognition/zero"
+        ]
+      },
+      "3": {
+        "count": 3,
+        "experiments": [
+          "capability_awareness/zero",
+          "training_knowledge/mean",
+          "metacognition/zero"
+        ]
+      },
+      "7": {
+        "count": 2,
+        "experiments": [
+          "self_recognition/zero",
+          "self_recognition/mean"
+        ]
+      },
+      "26": {
+        "count": 2,
+        "experiments": [
+          "self_recognition/zero",
+          "training_knowledge/zero"
+        ]
+      },
+      "4": {
+        "count": 2,
+        "experiments": [
+          "training_knowledge/zero",
+          "training_knowledge/mean"
+        ]
+      }
+    },
+    "all_candidate_counts": {
+      "0": 3,
+      "1": 1,
+      "3": 3,
+      "4": 2,
+      "5": 4,
+      "6": 4,
+      "7": 2,
+      "8": 4,
+      "9": 1,
+      "11": 1,
+      "13": 1,
+      "22": 1,
+      "23": 1,
+      "25": 1,
+      "26": 2,
+      "33": 1
+    }
+  }
+}
