@@ -213,4 +213,4 @@ The existence of these circuits does not settle the question of AI consciousness
 
 ---
 
-*Tool: NeuronScope v0.1.0 | Author: Ahmet Akalpler | nullVeil Labs | 2026*
+*2026*
