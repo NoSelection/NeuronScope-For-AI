@@ -1,1 +1,3 @@
 Place your LLM model files in this directory.
+
+Download from here: https://huggingface.co/google/gemma-3-4b-it/tree/main
