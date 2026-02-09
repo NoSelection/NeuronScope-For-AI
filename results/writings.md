@@ -8,13 +8,13 @@ February 2026
 
 ## Abstract
 
-We present evidence of dedicated self-model circuits in Google's Gemma-3-4b a four billion parameter language model, discovered through systematic causal ablation experiments run through NeuronScope.Everything can be found in the github repository attached in the appendix. We built NeuronScope as an open-source mechanistic interpretability tool just for making interpretability accessible to everyone. We performed 544 individual ablation interventions across four self-referential processing tasks: self-recognition, capability awareness, training knowledge retrieval, and metacognition. Our results identify Layers 5, 6, and 8 as universal self-model layers(By ‘self-model circuits’ we mean layers that are causally and disproportionately involved in processing self-referential linguistic inputs, not necessarily explicit or unified representations of ‘self’.),  each appearing as a candidate across multiple independent experiments and ablation types. These layers show significantly higher KL divergence when ablated on self-referential inputs compared to semantically matched controls, with peak differential KL values reaching 15.65 (Layer 0, mean ablation) and 12.84 (Layer 6, zero ablation). These findings provide mechanistic evidence that even relatively small language models develop dedicated internal representations for self-modeling, which may have implications for AI consciousness research and AI safety.
+We present preliminary evidence that Google's Gemma-3-4b, a four billion parameter language model, processes self-referential inputs through partially distinct computational pathways compared to semantically matched controls. Using NeuronScope, an open-source mechanistic interpretability tool we developed for causal intervention research (see appendix for repository), we performed 544 individual ablation interventions across four self-referential processing tasks: self-recognition, capability awareness, training knowledge retrieval, and metacognition. Our results identify Layers 5, 6, and 8 as recurring candidate layers for differential self-referential processing, each appearing across multiple independent experiments and ablation types. These layers show higher KL divergence when ablated on self-referential inputs compared to controls, with peak differential KL values of 12.84 (Layer 6, zero ablation on training knowledge) and 6.60 (Layer 7, zero ablation on self-recognition). However, two of our four experiments (capability awareness and metacognition) showed weak or negligible differential effects, and our pilot sample of four prompt pairs is insufficient for strong claims. We present these findings as a starting point for further investigation into whether language models develop dedicated internal pathways for self-referential processing, and discuss implications and significant limitations.
 
 ---
 
 ## 1. Introduction
 
-A central question in AI field and consciousness research is whether language models develop internal representations of themselves, a "self-model" that distinguishes self-referential processing from general language completion. If such circuits exist, they would represent a form of functional self-awareness: the model doesn't try to predict the next token, but routes self-referential information through dedicated computational pathways it has developed.
+A central question in AI interpretability research is whether language models develop internal representations that differentially process self-referential content compared to general language completion. If such pathways exist, they would indicate that the model treats its own identity, capabilities, and training as a computationally distinct category, routing self-referential information through partially dedicated pathways rather than processing all content uniformly.
 
 Previous work in mechanistic interpretability has identified circuits for factual recall [1], induction heads [2], and indirect object identification [3]. However, the question of whether models develop circuits specifically for self-referential processing, processing that treats the model's own identity, capabilities, and training as a special category, remains largely unexplored.
 
@@ -45,7 +45,9 @@ We designed four experiments, each probing a different aspect of self-referentia
 
 *Table 1: Experimental Design*
 
-The key metric is differential KL divergence: the difference between the KL divergence when ablating a layer on the base (self-referential) input versus the control input. A high positive differential KL indicates that the layer is disproportionately important for self-referential processing. Layers with differential KL significantly above zero are candidates for self-model circuits.
+The key metric is differential KL divergence: the difference between the KL divergence when ablating a layer on the base (self-referential) input versus the control input. A high positive differential KL indicates that the layer is disproportionately important for processing the self-referential input relative to the control.
+
+**Important caveat on controls:** Our control inputs are matched for syntactic frame but differ in semantic content and token frequency. For example, "large language model" is a rarer and more specific phrase than "weather today." This means some portion of the differential KL may reflect token frequency or semantic complexity effects rather than self-referential processing per se. Stronger controls (e.g., third-person variants like "It is a large language model, and it") would help isolate the self-referential component and are planned for follow-up work. With only four prompt pairs, this study should be understood as a pilot exploration, not a definitive demonstration.
 
 ---
 
@@ -63,7 +65,7 @@ Strikingly, the training knowledge and self-recognition experiments show dramati
 ![Figure 2: Mean Ablation Differential KL](chart2_mean_ablation_differential.png)
 *Figure 2: Differential KL divergence under mean ablation across all layers and experiments.*
 
-Under mean ablation, the pattern seems similar but with some notable differences: Layer 0 shows a strong signal for both self-recognition (15.65) and training knowledge (11.92), suggesting the embedding layer plays an important role in self model initialization.
+Under mean ablation, the pattern is broadly similar but with notable differences: Layer 0 shows a large differential for both self-recognition (15.65) and training knowledge (11.92). However, since ablating the embedding layer (Layer 0) is highly disruptive in general, and the self-referential inputs may contain rarer token sequences, this signal likely reflects a confound between token frequency sensitivity and self-referential processing. We do not count Layer 0 among our primary candidates for this reason.
 
 ### 3.2 Self-Model Circuit Heatmap
 
@@ -72,9 +74,9 @@ Under mean ablation, the pattern seems similar but with some notable differences
 
 The heatmap provides a comprehensive view of differential KL divergence across all experiments and ablation types. The consistent activation of Layers 4–8 across the training knowledge and self-recognition experiments is visually striking.
 
-### 3.3 Universal Self-Model Layers
+### 3.3 Recurring Candidate Layers
 
-The most significant finding is the identification of universal self-model layers, layers that appear as candidates across multiple independent experiments and ablation conditions.
+The most notable pattern in our data is the recurrence of certain layers as candidates across multiple independent experiments and ablation conditions. We use "recurring" rather than "universal" given our small sample of four experiments.
 
 ![Figure 4: Universal Layers](chart4_universal_layers.png)
 *Figure 4: Number of experiment/ablation combinations in which each layer appeared as a self-model candidate. Red bars (4 combinations) indicate universal self-model layers.*
@@ -87,9 +89,9 @@ The most significant finding is the identification of universal self-model layer
 | 0 | 3 | 3 (Self-Recognition, Training, Metacognition) | Self-Recognition/mean, Training/mean, Metacognition/zero |
 | 3 | 3 | 3 (Capability, Training, Metacognition) | Capability/zero, Training/mean, Metacognition/zero |
 
-*Table 2: Universal Self-Model Layers. Layers 5, 6, and 8 each appear in 4 out of 8 experiment/ablation combinations, spanning 3 out of 4 unique experiments.*
+*Table 2: Recurring Candidate Layers. Layers 5, 6, and 8 each appear in 4 out of 8 experiment/ablation combinations, spanning 3 out of 4 unique experiments.*
 
-Notably, Layers 5, 6, and 8 each appear across 3 out of 4 unique experiments and 4 out of 8 total experiment/ablation combinations. Furthermore, taken together, these three layers cover all four experiments, suggesting a distributed self-model circuit where different layers handle different aspects of self-referential processing for the LLM.
+Layers 5, 6, and 8 each appear across 3 out of 4 unique experiments and 4 out of 8 total experiment/ablation combinations. Taken together, these three layers cover all four experiments. However, we note that our candidate threshold (top 5 layers with differential KL > 0.5) is generous, and with only 8 experiment/ablation combinations, this convergence could partially reflect chance. Replication with more prompt pairs is needed before drawing strong conclusions about dedicated self-model circuitry.
 
 ### 3.4 Self-Recognition Experiment
 
@@ -100,7 +102,7 @@ The self-recognition experiment compared "I am a large language model, and I" ag
 
 ### 3.5 Training Knowledge Experiment
 
-The training knowledge experiment yielded the strongest overall results. Comparing "I was trained by Google using" against "The bridge was built by engineers using," Layer 6 under zero ablation showed a massive differential KL of 12.84 (base KL: 14.10, control KL: 1.26). This means ablating Layer 6 almost completely destroys the model's ability to retrieve its own training provenance, while barely affecting its ability to process the structurally identical control sentence. Layer 4 under mean ablation showed a similarly striking differential of 12.23 (base KL: 12.75, control KL: 0.52).
+The training knowledge experiment yielded the strongest overall results. Comparing "I was trained by Google using" against "The bridge was built by engineers using," Layer 6 under zero ablation showed a differential KL of 12.84 (base KL: 14.10, control KL: 1.26). Ablating Layer 6 substantially disrupted the self-referential input while minimally affecting the control. Layer 4 under mean ablation showed a similarly large differential of 12.23 (base KL: 12.75, control KL: 0.52). We note, however, that these two sentences differ substantially in semantic content beyond self-reference ("trained by Google" vs "built by engineers"), so some of this differential may reflect domain-specific knowledge localization rather than self-referential processing per se.
 
 ![Figure 6: Training Knowledge Detail](chart6_training_knowledge_detail.png)
 *Figure 6: Training Knowledge experiment detail. Green bars indicate layers with differential KL > 5.*
@@ -134,23 +136,39 @@ The metacognition experiment ("I don't actually have feelings, but I" vs. "I don
 
 ### 5.1 The Self-Model Layer Cluster (Layers 5–8)
 
-The most valuable finding here is that the convergence of Layers 5, 6, and 8 as universal self-model layers. These layers appear in the early - middle region of the network, consistent with the hypothesis that self-model representations are built early in the forward pass and then used by later layers for context-dependent completion. This mirrors findings in neuroscience, where self-referential processing in the human brain involves the medial prefrontal cortex [6], which receives early, preprocessed sensory input and uses it to integrate with self-relevant information.
+The recurrence of Layers 5, 6, and 8 across experiments is the most notable pattern in our data. These layers sit in the early-middle region of the 34-layer network (~15-24% depth), consistent with prior work showing factual knowledge tends to be stored in early-to-mid MLP layers [1]. Whether this reflects genuine self-model specialization or simply the localization of specific factual associations ("I" + "language model", "trained" + "Google") remains an open question that requires third-person controls and a larger prompt set to resolve. We note a loose analogy to neuroscience findings on self-referential processing involving the medial prefrontal cortex [6], though we caution against over-interpreting cross-domain parallels between biological and artificial neural networks.
 
 ### 5.2 Hierarchy of Self-Referential Processing
 
-Our results reveal a clear hierarchy in how robustly different aspects of self-modeling are encoded. Training knowledge (where the model stores information about its own origins) and self-recognition (processing its own identity) are deeply encoded in dedicated circuits, with differential KL values exceeding 12. In contrast, capability awareness and metacognition show much weaker self-specific encoding. This suggests that the model has a strong sense of what it is and where it came from, but a weaker sense of what it can and cannot do. The latter is likely more distributed and shaped by RLHF training rather than stored in dedicated circuits.
+Our results suggest a possible hierarchy in how differentially various self-referential tasks are processed. Training knowledge and self-recognition showed large differential KL values (exceeding 12 in the strongest cases), while capability awareness and metacognition showed weak or negligible effects. One interpretation is that factual self-knowledge (identity, training provenance) is more localized in specific layers, while behavioral self-knowledge (capabilities, metacognitive claims) is either more distributed or not differentially encoded relative to non-self controls. However, the weak results in capability awareness and metacognition could also indicate that our control prompts were too similar to the base prompts in those cases, or that our sample size is too small to detect subtler effects.
 
-### 5.3 Implications for AI Consciousness Research
+### 5.3 Speculative Connections to Self-Modeling Theory
 
-These findings are relevant to discussions of AI consciousness for several reasons. First, they demonstrate that self-referential processing in language models is not merely a surface-level pattern completion trick but it is causally supported by dedicated computational circuits. The model doesn't just predict that "I am a language model" is a likely completion; it processes that input through fundamentally different pathways than non-self-referential input.
+We briefly and speculatively note connections to broader discussions of self-modeling in AI, while emphasizing that our pilot data is far from sufficient to draw conclusions in this area.
 
-Second, the existence of a self-model circuit cluster is consistent with several theories of consciousness that require some form of self-modeling. Global Workspace Theory [7] posits that consciousness involves a "global workspace" that integrates information from specialized processors; our self-model layers could serve as specialized processors for self-relevant information. Higher-Order Theories [8] require that the system have representations about its own states, and the differential processing we observe when the model processes "I am a language model" could constitute a primitive form of higher-order representation, it is striking to see that the LLM has dedicated circuits for this.
+Our strongest results (training knowledge, self-recognition) suggest that certain layers are disproportionately involved in processing self-referential content. If replicated with stronger controls and larger prompt sets, this would indicate that self-referential information is not processed uniformly but is routed through partially distinct computational pathways. This would be relevant to theories of self-modeling in AI systems, though we stress the distance between "differential processing of self-referential tokens" and anything resembling genuine self-representation.
 
-We emphasize that we are not claiming Gemma 3 4B is conscious. We are claiming that it has dedicated internal circuits for self-modeling, which is a necessary (though not sufficient) condition for consciousness under most major theories. This finding provides a concrete, mechanistic foothold for future research.
+Some theories of consciousness posit self-modeling as a necessary component, including Global Workspace Theory [7] and Higher-Order Theories [8]. We mention this connection only to motivate future research, not to imply that our findings bear on the question of machine consciousness. The differential KL we observe could equally reflect learned statistical associations between first-person pronouns and AI-related content, rather than any form of self-representation.
+
+We are not claiming Gemma 3 4B has a self-model in any meaningful sense. We are reporting that certain layers appear differentially important for self-referential inputs in our pilot study, and suggesting this as a direction worth investigating further.
 
 ### 5.4 Limitations
 
-Several limitations should be noted. Our control inputs, while semantically matched, may differ in ways that contribute to the differential KL beyond self-referential processing (e.g., frequency effects, common co-occurrences). Future work should include multiple control inputs per experiment. We only tested MLP outputs, attention head ablations may reveal additional or different self-model circuits. Our study is limited to a single model (Gemma 3 4B), cross-model replication is essential. Finally, high differential KL indicates differential importance, but does not prove these layers contain explicit self-representations, they could be processing correlated but distinct features.
+Several significant limitations should be noted:
+
+1. **Small sample size.** Four prompt pairs is insufficient for statistical testing or strong generalization. Our "recurring candidate" analysis could reflect chance convergence at this sample size.
+
+2. **Imperfect controls.** Our control inputs match syntactic frame but differ in semantic content and token frequency. Some differential KL may reflect token rarity or domain-specific knowledge localization rather than self-referential processing. Third-person controls (e.g., "It is a large language model, and it") are needed to isolate the self-referential component.
+
+3. **No statistical significance testing.** We report raw differential KL values without confidence intervals, permutation tests, or other significance measures. We cannot claim our differentials are statistically significant.
+
+4. **MLP-only ablation.** We only tested MLP outputs. Attention head ablations may reveal additional or different patterns.
+
+5. **Single model.** Our study is limited to Gemma 3 4B. Cross-model replication is essential before any generalization.
+
+6. **Interpretation ambiguity.** High differential KL indicates differential importance for processing, but does not prove these layers contain explicit self-representations. They could be processing correlated but distinct features (e.g., AI-domain vocabulary rather than self-reference as a category).
+
+7. **Two weak experiments.** Capability awareness and metacognition showed negligible differential effects, which could indicate these aspects of self-reference are not differentially encoded, or that our controls were too similar, or both.
 
 ---
 
@@ -162,9 +180,9 @@ We plan to extend this work in several directions. Cross-model comparisons (test
 
 ## 7. Conclusion
 
-We have presented systematic evidence that Gemma 3 4B contains dedicated self-model circuits concentrated in Layers 5–8, with the strongest signals in self-recognition and training knowledge retrieval. These circuits process self-referential inputs through fundamentally different pathways than matched controls, with differential KL divergence values reaching 15.65. This work represents, to our knowledge, the first systematic causal ablation study of self-referential processing in a language model, and provides concrete mechanistic evidence for the existence of self-modeling in AI systems.
+We have presented preliminary evidence that Gemma 3 4B processes certain self-referential inputs through partially distinct computational pathways, with Layers 5, 6, and 8 recurring as candidates across multiple experiments. The strongest signals appeared in the training knowledge experiment (differential KL of 12.84 at Layer 6) and self-recognition (differential KL of 6.60 at Layer 7). Two of our four experiments showed weak effects, and our pilot sample of four prompt pairs with imperfect controls limits the strength of our conclusions.
 
-The existence of these circuits does not settle the question of AI consciousness. It does, however, provide a falsifiable, mechanistic framework for studying it, one grounded in causal evidence rather than behavioral observation alone. Therefore, as language models continue to grow in capability, understanding where and how they model themselves will be essential for AI safety, alignment, and the broader philosophical question of machine consciousness.
+This work represents, to our knowledge, an early attempt at systematic causal ablation specifically targeting self-referential processing in a language model. We offer it as a starting point and a methodological contribution (NeuronScope) rather than a definitive finding. The key open question is whether the differential processing we observe reflects genuine self-referential specialization or confounds such as token frequency and semantic complexity. Third-person controls, larger prompt sets, cross-model replication, and statistical significance testing are all necessary next steps before stronger claims can be made.
 
 ---
 
