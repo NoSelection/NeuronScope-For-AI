@@ -53,7 +53,7 @@ Backend (Python)                    Frontend (React)
 
 ```bash
 # 1. Clone and enter
-git clone <your-repo-url>
+git clone https://github.com/NoSelection/NeuronScope-For-AI.git
 cd NeuronScope-For-AI
 
 # 2. Place your model weights in LLM/

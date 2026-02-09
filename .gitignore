@@ -191,5 +191,3 @@ data/
 # Frontend
 node_modules/
 frontend/dist/
-results/writing.md
-results/writings.md
