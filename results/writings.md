@@ -1,4 +1,4 @@
-# Evidence of Self-Model Circuits in Gemma 3 4B: Mechanistic Interpretability Analysis Using Causal Ablation
+# Preliminary Evidence for Differential Self-Referential Processing in Gemma 3 4B
 
 February 2026
 
