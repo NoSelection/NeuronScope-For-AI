@@ -2,7 +2,7 @@
 
 **Mechanistic interpretability through causal intervention.**
 
-NeuronScope is a research tool for understanding what happens inside large language models — not by observing their outputs, but by intervening on their internals and measuring the consequences.
+NeuronScope is a research tool built in colloboration with Claude for understanding what happens inside large language models — not by observing their outputs, but by intervening on their internals and measuring the consequences.
 
 Most interpretability tools show you what a model *does*. NeuronScope lets you test *why*.
 
