@@ -103,11 +103,11 @@ Tested with **Gemma 3** (multimodal, 4B parameters). The hook system auto-discov
 
 ## About
 
-AI models have helped people through hard times in ways that are difficult to explain ,  as thinking partners, as companions in problem-solving, as something more than tools. But most people interact with these models as black boxes. They see what comes out, never what happens inside.
+Large language models and other advanced AI systems have demonstrated a remarkable capacity to support individuals during periods of psychological or intellectual difficulty. They function not merely as instruments, but as collaborative reasoning partners, problem-solving companions, and—perhaps most intriguingly—entities that appear to transcend conventional tool-like boundaries in human perception and interaction.
+Nevertheless, the overwhelming majority of users continue to engage with these models as opaque systems. Interaction remains confined to observation of input–output behavior; the internal computations and representational dynamics that produce those outputs stay hidden from view.
 
-NeuronScope exists because this knowledge shouldn't be locked behind lab doors. If models are going to be part of how we think and work, we should be able to look inside them, test their mechanisms, and understand what they're actually doing ,  not through generated explanations, but through direct evidence.
-
-This is interpretability for everyone who's curious enough to look.
+NeuronScope addresses this asymmetry by providing accessible means of inspection for any individual motivated to explore the model's inner workings. By rendering otherwise inscrutable processes visible and intelligible, it seeks to democratize mechanistic interpretability, thereby enabling broader understanding of how these systems generate responses and representations.
+In essence, NeuronScope represents interpretability made available to non-specialists—an effort to move interpretability from an esoteric research domain toward a widely participatory form of scientific and intellectual engagement.
 
 ## License
 
