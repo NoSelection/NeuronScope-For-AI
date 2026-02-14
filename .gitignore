@@ -192,7 +192,12 @@ results/*/sweeps/
 results/*/pdfs/
 results/*.zip
 results/**/master_summary*.json
-results/*_executed.ipynb
+
+# Notebooks with executed outputs (may contain local paths/usernames)
+results/**/*_executed.ipynb
+
+# Unpublished paper drafts
+results/*.pdf
 
 # Frontend
 node_modules/
