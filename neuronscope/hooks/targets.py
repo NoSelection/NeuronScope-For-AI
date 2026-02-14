@@ -63,11 +63,23 @@ class HookTarget:
     head: int | None = None
     token_position: int | None = None
     neuron_index: int | None = None
+    head_dim: int | None = None
 
     @property
     def is_pre_hook(self) -> bool:
-        """Whether this target requires a pre-hook (input to module) vs output hook."""
-        return self.component == ComponentType.RESIDUAL_PRE
+        """Whether this target requires a pre-hook (input to module) vs output hook.
+
+        Pre-hooks are needed for:
+        - RESIDUAL_PRE: captures the residual stream before the layer processes it.
+        - ATTENTION_OUTPUT with head specified: the input to o_proj has heads still
+          separated as (batch, seq, num_heads * head_dim), so we can ablate a
+          single head's slice before o_proj mixes them together.
+        """
+        if self.component == ComponentType.RESIDUAL_PRE:
+            return True
+        if self.component == ComponentType.ATTENTION_OUTPUT and self.head is not None:
+            return True
+        return False
 
     def to_module_name(self, module_map: dict[str, object]) -> str:
         """Resolve this target to an actual PyTorch module name.
@@ -106,6 +118,7 @@ class HookTarget:
             "head": self.head,
             "token_position": self.token_position,
             "neuron_index": self.neuron_index,
+            "head_dim": self.head_dim,
         }
 
     @classmethod
@@ -116,4 +129,5 @@ class HookTarget:
             head=d.get("head"),
             token_position=d.get("token_position"),
             neuron_index=d.get("neuron_index"),
+            head_dim=d.get("head_dim"),
         )

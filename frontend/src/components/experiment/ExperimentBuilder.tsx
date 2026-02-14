@@ -5,7 +5,7 @@ import { Panel } from '../common/Panel';
 import { InfoLabel } from '../common/InfoTip';
 
 export function ExperimentBuilder() {
-  const { config, updateConfig, running, error, runExperiment, runSweep, resetConfig } =
+  const { config, updateConfig, running, error, runExperiment, runSweep, runHeadSweep, resetConfig } =
     useExperimentStore();
   const { loaded, info } = useModelStore();
 
@@ -69,7 +69,7 @@ export function ExperimentBuilder() {
         {/* Interventions */}
         <div data-tour="intervention">
           <InfoLabel topic="intervention">Interventions</InfoLabel>
-          <InterventionSelector numLayers={info?.num_layers ?? 34} />
+          <InterventionSelector numLayers={info?.num_layers ?? 34} numHeads={info?.num_attention_heads ?? null} />
         </div>
 
         {/* Seed */}
@@ -108,6 +108,22 @@ export function ExperimentBuilder() {
           >
             {running ? '...' : 'Sweep All Layers'}
           </button>
+          {config.interventions.some((i) => i.target_component === 'attn_output') && (
+            <button
+              onClick={() => {
+                const attnIntervention = config.interventions.find(
+                  (i) => i.target_component === 'attn_output'
+                );
+                if (attnIntervention) {
+                  runHeadSweep(attnIntervention.target_layer);
+                }
+              }}
+              disabled={!canRun || running}
+              className="rounded-lg border border-amber-600/50 px-4 py-2.5 text-sm font-medium text-amber-300 transition-colors hover:bg-amber-900/20 disabled:opacity-40"
+            >
+              {running ? '...' : 'Sweep All Heads'}
+            </button>
+          )}
         </div>
       </div>
     </Panel>

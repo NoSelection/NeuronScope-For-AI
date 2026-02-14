@@ -1,31 +1,44 @@
 # NeuronScope TODO
 
-## Paper: "Should We Trust AI Self-Reports?"
+## Self-Referential Processing Research
 
-Empirically investigating whether LLM self-referential outputs are grounded in internal representations or surface-level pattern matching, and what this means for AI literacy in education.
+Investigating whether LLM self-referential outputs are grounded in internal representations or surface-level pattern matching.
 
-### Pilot Study (DONE)
-- [x] 4 experiments (self_recognition, capability_awareness, training_knowledge, metacognition)
-- [x] 2 ablation types (zero, mean) x 2 inputs (base, control) = 16 sweeps
-- [x] 544 forward passes across 34 layers
-- [x] Identified candidate self-model circuit: layers 5, 6, 8
-- [x] Results in `results/self_model_circuits/`
+### v1 — Pilot Study (DONE)
+- [x] 4 experiments, 2 ablation types, 16 sweeps, 544 runs
+- [x] Identified candidate layers 5, 6, 8
+- [x] Results: `results/self_model_circuits/`
+- [x] Script: `experiments/run_v1_self_model.py`
 
-### Additional Experiments Needed
-- [ ] Expand to 15-20+ prompt pairs (diverse self-referential vs control)
-- [ ] Factual knowledge baseline ("The Eiffel Tower is in") to confirm layers 5-8 are self-model specific, not general fact storage
-- [ ] Attention head sweep on layers 5, 6, 8 to narrow the circuit
-- [ ] Activation patching: transplant self-referential behavior between inputs via layers 5-8
-- [ ] Bootstrap confidence intervals / permutation tests on differential KL
+### v2 — Extended Replication (DONE)
+- [x] 32 prompt triplets (self / control / third-person)
+- [x] 192 sweeps, 6,528 runs (~14 hours)
+- [x] Wilcoxon tests + bootstrap 95% CIs
+- [x] Found universal layers: 9, 26, 27
+- [x] Pronoun confound analysis — Layer 26 MLP effect is "I" vs "It", not AI-specific
+- [x] Cohen's d, Bonferroni correction, rank-biserial correlation
+- [x] Results: `results/self_model_circuits_v2/`
+- [x] Script: `experiments/run_v2_self_model.py`
+
+### v3 — Attention Head Ablation (READY TO RUN)
+- [x] Per-head ablation feature implemented (backend + frontend + UI)
+- [x] 8 attention heads per layer, 3 target layers (9, 26, 27)
+- [x] 1,728 individual runs (~3.5 hours)
+- [ ] Run overnight: `python experiments/run_v3_head_sweep.py`
+- [ ] Analyze: do any heads show AI-content-specific effects beyond pronoun confound?
+- [ ] Script: `experiments/run_v3_head_sweep.py`
+
+### NeuronScope Tool
+- [x] Backend: model loading, hooks, experiments, analysis, SQLite persistence
+- [x] Frontend: ExperimentWorkbench, ActivationExplorer, D3 charts
+- [x] Layer sweeps + head sweeps with insights
+- [x] PDF report generation (single experiment + sweep)
+- [x] Educational tooltips and guided walkthrough
+- [x] Non-technical-friendly UI with InfoTip system
+- [x] OOM handling and error recovery
+
+### Future Work
+- [ ] Activation patching between self/control inputs to trace information flow
 - [ ] Test on different model sizes (Gemma 2B, 9B) to see if circuit location scales
-
-### Education Component
-- [ ] Design student survey on AI self-report trust (pre/post interpretability demo)
-- [ ] Develop simplified NeuronScope demo for non-technical educators
-- [ ] Connect findings to AI literacy curriculum frameworks
-
-### Writing
-- [ ] Literature review: mechanistic interpretability + AI in education
-- [ ] Methodology section
-- [ ] Results + discussion
-- [ ] Implications for AI literacy education
+- [ ] Multi-layer interaction analysis (do layers 9 and 26 interact?)
+- [ ] Student survey on AI self-report trust (pre/post interpretability demo)

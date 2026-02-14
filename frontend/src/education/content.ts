@@ -77,7 +77,19 @@ export const EDUCATION = {
 
   component_attn_output: {
     short: 'The output of the attention mechanism — what the model decided to "focus on".',
-    long: 'Attention lets the model look at all previous tokens and decide which ones are relevant for predicting the next word. The attention output is the result of that focusing process. Ablating it tests whether the model needs to attend to context here.',
+    long: 'Attention lets the model look at all previous tokens and decide which ones are relevant for predicting the next word. The attention output is the result of that focusing process. Ablating it tests whether the model needs to attend to context here. You can also target individual attention heads within this component for more surgical analysis.',
+  },
+
+  attention_head: {
+    short: 'One of 8 independent "focus patterns" within each layer\'s attention mechanism.',
+    long: 'Each layer has multiple attention heads that independently decide which tokens to focus on. Different heads learn different patterns — one might track grammatical subjects, another might follow positional patterns, and another might look for semantic relationships. By ablating one head at a time, you can discover what specific focus pattern each head has learned.',
+    analogy: 'Like a team of 8 readers each highlighting different parts of the same document. One highlights names, another highlights verbs, another highlights locations. Removing one reader\'s highlights tells you what information they were uniquely contributing.',
+  },
+
+  head_sweep: {
+    short: 'Test each attention head individually to find which ones matter for the prediction.',
+    long: 'A head sweep runs one experiment per attention head within a chosen layer, ablating each head separately while leaving the others intact. The result shows which heads carry information critical for the prediction. Heads with high KL divergence are attending to tokens that carry essential information.',
+    analogy: 'Like testing each member of a band by muting them one at a time. If muting the guitarist kills the melody, the guitarist was carrying the tune.',
   },
 
   component_attn_pattern: {

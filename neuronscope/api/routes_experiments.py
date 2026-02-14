@@ -12,7 +12,11 @@ from neuronscope.hooks.manager import HookManager
 from neuronscope.models.registry import ModelRegistry
 from neuronscope.store.experiment_store import ExperimentStore
 from neuronscope.store.sweep_store import SweepStore
-from neuronscope.analysis.insights import generate_insights, generate_sweep_insights
+from neuronscope.analysis.insights import (
+    generate_insights,
+    generate_sweep_insights,
+    generate_head_sweep_insights,
+)
 
 router = APIRouter()
 store = ExperimentStore()
@@ -22,6 +26,12 @@ sweep_store = SweepStore()
 class SweepRequest(BaseModel):
     config: ExperimentConfig
     layers: list[int] | None = None
+
+
+class HeadSweepRequest(BaseModel):
+    config: ExperimentConfig
+    layer: int
+    heads: list[int] | None = None
 
 
 def _get_runner() -> ExperimentRunner:
@@ -67,6 +77,30 @@ async def run_sweep(request: SweepRequest) -> dict:
         request.config.name or "Untitled Sweep", request.config, results
     )
     insights = generate_sweep_insights(results)
+    return {"results": results, "insights": insights, "sweep_id": sweep_id}
+
+
+@router.post("/sweep-heads")
+async def run_head_sweep(request: HeadSweepRequest) -> dict:
+    """Run the same intervention across all attention heads in a single layer."""
+    runner = _get_runner()
+
+    loop = asyncio.get_event_loop()
+    try:
+        results = await loop.run_in_executor(
+            None,
+            partial(runner.run_head_sweep, request.config, request.layer, request.heads),
+        )
+    except (ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
+    await store.save_many(results)
+    sweep_id = await sweep_store.save(
+        f"{request.config.name or 'Untitled'}_heads_L{request.layer}",
+        request.config,
+        results,
+    )
+    insights = generate_head_sweep_insights(results, request.layer)
     return {"results": results, "insights": insights, "sweep_id": sweep_id}
 
 

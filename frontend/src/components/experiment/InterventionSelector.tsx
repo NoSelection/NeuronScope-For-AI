@@ -27,9 +27,10 @@ const INTERVENTION_TOPIC_MAP: Record<InterventionType, EducationKey> = {
 
 interface Props {
   numLayers: number;
+  numHeads: number | null;
 }
 
-export function InterventionSelector({ numLayers }: Props) {
+export function InterventionSelector({ numLayers, numHeads }: Props) {
   const { config, updateIntervention, addIntervention, removeIntervention } =
     useExperimentStore();
 
@@ -80,11 +81,13 @@ export function InterventionSelector({ numLayers }: Props) {
               <InfoLabel topic="component">Component</InfoLabel>
               <select
                 value={intervention.target_component}
-                onChange={(e) =>
+                onChange={(e) => {
+                  const newComponent = e.target.value as ComponentType;
                   updateIntervention(idx, {
-                    target_component: e.target.value as ComponentType,
-                  })
-                }
+                    target_component: newComponent,
+                    ...(newComponent !== 'attn_output' ? { target_head: null } : {}),
+                  });
+                }}
                 className="w-full rounded border border-zinc-600 bg-zinc-900 px-2 py-1.5 text-sm text-zinc-200"
               >
                 {COMPONENTS.map(([value, label]) => (
@@ -116,6 +119,32 @@ export function InterventionSelector({ numLayers }: Props) {
                 ))}
               </select>
             </div>
+
+            {/* Attention Head (shown only for attention output) */}
+            {intervention.target_component === 'attn_output' && (
+              <div>
+                <InfoLabel topic="attention_head">Attention Head</InfoLabel>
+                <select
+                  value={intervention.target_head ?? ''}
+                  onChange={(e) =>
+                    updateIntervention(idx, {
+                      target_head: e.target.value
+                        ? parseInt(e.target.value)
+                        : null,
+                    })
+                  }
+                  className="w-full rounded border border-zinc-600 bg-zinc-900 px-2 py-1.5 text-sm text-zinc-200"
+                >
+                  <option value="">All heads</option>
+                  {numHeads &&
+                    Array.from({ length: numHeads }, (_, i) => (
+                      <option key={i} value={i}>
+                        Head {i}
+                      </option>
+                    ))}
+                </select>
+              </div>
+            )}
 
             {/* Token Position (optional) */}
             <div>

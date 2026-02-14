@@ -49,7 +49,13 @@ def _slice_tensor(tensor: torch.Tensor, target: HookTarget) -> torch.Tensor:
     if target.token_position is not None and tensor.dim() >= 2:
         tensor = tensor[:, target.token_position : target.token_position + 1]
 
-    if target.neuron_index is not None and tensor.dim() >= 3:
+    # Head slicing: extract the head's slice from the packed last dimension.
+    # o_proj input shape: (batch, seq, num_heads * head_dim)
+    if target.head is not None and target.head_dim is not None and tensor.dim() >= 3:
+        start = target.head * target.head_dim
+        end = start + target.head_dim
+        tensor = tensor[..., start:end]
+    elif target.neuron_index is not None and tensor.dim() >= 3:
         tensor = tensor[..., target.neuron_index : target.neuron_index + 1]
 
     return tensor

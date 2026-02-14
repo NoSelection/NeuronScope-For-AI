@@ -42,6 +42,7 @@ interface ExperimentState {
   config: ExperimentConfig;
   currentResult: ExperimentResult | null;
   sweepResults: ExperimentResult[];
+  headSweepResults: ExperimentResult[];
   insights: Insight[];
   history: ExperimentSummary[];
   running: boolean;
@@ -59,6 +60,7 @@ interface ExperimentState {
   resetConfig: () => void;
   runExperiment: () => Promise<void>;
   runSweep: (layers?: number[]) => Promise<void>;
+  runHeadSweep: (layer: number, heads?: number[]) => Promise<void>;
   loadHistory: () => Promise<void>;
   selectResult: (id: string) => Promise<void>;
   loadSweepHistory: () => Promise<void>;
@@ -70,6 +72,7 @@ export const useExperimentStore = create<ExperimentState>((set, get) => ({
   config: defaultConfig(),
   currentResult: null,
   sweepResults: [],
+  headSweepResults: [],
   insights: [],
   history: [],
   running: false,
@@ -108,7 +111,7 @@ export const useExperimentStore = create<ExperimentState>((set, get) => ({
     }));
   },
 
-  resetConfig: () => set({ config: defaultConfig() }),
+  resetConfig: () => set({ config: defaultConfig(), headSweepResults: [] }),
 
   runExperiment: async () => {
     const { config } = get();
@@ -128,6 +131,18 @@ export const useExperimentStore = create<ExperimentState>((set, get) => ({
       const { results, insights } = await api.runSweep(config, layers);
       set({ sweepResults: results, insights, running: false });
       // Refresh sweep history in background
+      get().loadSweepHistory();
+    } catch (e) {
+      set({ running: false, error: (e as Error).message });
+    }
+  },
+
+  runHeadSweep: async (layer, heads) => {
+    const { config } = get();
+    set({ running: true, error: null, headSweepResults: [], insights: [] });
+    try {
+      const { results, insights } = await api.runHeadSweep(config, layer, heads);
+      set({ headSweepResults: results, insights, running: false });
       get().loadSweepHistory();
     } catch (e) {
       set({ running: false, error: (e as Error).message });

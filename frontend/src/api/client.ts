@@ -85,6 +85,17 @@ export async function runSweep(
   });
 }
 
+export async function runHeadSweep(
+  config: ExperimentConfig,
+  layer: number,
+  heads?: number[],
+): Promise<{ results: ExperimentResult[]; insights: Insight[]; sweep_id: string }> {
+  return request('/experiments/sweep-heads', {
+    method: 'POST',
+    body: JSON.stringify({ config, layer, heads: heads ?? null }),
+  });
+}
+
 export async function listExperiments(): Promise<ExperimentSummary[]> {
   return request('/experiments/');
 }

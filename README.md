@@ -2,7 +2,7 @@
 
 **Mechanistic interpretability through causal intervention.**
 
-NeuronScope is a research tool built in colloboration with Claude for understanding what happens inside large language models, not by observing their outputs, but by intervening on their internals and measuring the consequences.
+NeuronScope is a research tool built in collaboration with Claude for understanding what happens inside large language models, not by observing their outputs, but by intervening on their internals and measuring the consequences.
 
 Most interpretability tools show you what a model *does*. NeuronScope lets you test *why*.
 
@@ -88,7 +88,7 @@ Click **Load Model**, type an input, select a layer and intervention, and click 
 
 ## Design Principles
 
-This project follows 18 principles documented in `AGENTS.md`. The core ones:
+This project follows 18 principles documented in `PRINCIPLES.md`. The core ones:
 
 1. **Mechanisms, not impressions** ,  any output that cannot be causally tested is invalid
 2. **Every claim must be falsifiable** ,  if a result can't be contradicted by a counter-run, it doesn't exist

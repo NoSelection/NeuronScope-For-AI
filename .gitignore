@@ -187,6 +187,16 @@ LLM/*
 # Runtime data
 data/
 
+# Experiment results (large data files, regeneratable)
+results/*/sweeps/
+results/*/pdfs/
+results/*.zip
+results/**/master_summary*.json
+results/*_executed.ipynb
+
 # Frontend
 node_modules/
 frontend/dist/
+
+# Claude Code
+.claude/

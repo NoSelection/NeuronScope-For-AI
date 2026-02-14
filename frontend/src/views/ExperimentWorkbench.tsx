@@ -3,13 +3,14 @@ import { ModelInfoPanel } from '../components/model/ModelInfoPanel';
 import { ExperimentBuilder } from '../components/experiment/ExperimentBuilder';
 import { ResultsPanel } from '../components/experiment/ResultsPanel';
 import { SweepResults } from '../components/experiment/SweepResults';
+import { HeadSweepResults } from '../components/experiment/HeadSweepResults';
 import { InsightsPanel } from '../components/experiment/InsightsPanel';
 import { ExperimentHistory } from '../components/experiment/ExperimentHistory';
 
 export function ExperimentWorkbench() {
-  const { currentResult, sweepResults, insights } = useExperimentStore();
+  const { currentResult, sweepResults, headSweepResults, insights } = useExperimentStore();
 
-  const hasResults = currentResult || sweepResults.length > 0;
+  const hasResults = currentResult || sweepResults.length > 0 || headSweepResults.length > 0;
 
   return (
     <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
@@ -25,6 +26,7 @@ export function ExperimentWorkbench() {
         {insights.length > 0 && <InsightsPanel insights={insights} />}
         {currentResult && <ResultsPanel result={currentResult} />}
         {sweepResults.length > 0 && <SweepResults results={sweepResults} />}
+        {headSweepResults.length > 0 && <HeadSweepResults results={headSweepResults} />}
         {!hasResults && (
           <div className="flex h-64 items-center justify-center rounded-xl border border-dashed border-zinc-700/50 text-zinc-500">
             <div className="text-center">

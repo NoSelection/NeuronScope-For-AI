@@ -49,6 +49,19 @@ class Intervention(ABC):
         return cls(**params)
 
 
+def _head_slice(target: HookTarget) -> slice | None:
+    """Compute the slice of the last dimension for a specific attention head.
+
+    Returns None if head is not specified. For Gemma 3 4B with head_dim=256:
+    head 0 = [0:256], head 1 = [256:512], etc.
+    """
+    if target.head is None or target.head_dim is None:
+        return None
+    start = target.head * target.head_dim
+    end = start + target.head_dim
+    return slice(start, end)
+
+
 class ZeroAblation(Intervention):
     """Set activation to zero.
 
@@ -59,7 +72,13 @@ class ZeroAblation(Intervention):
     def apply(self, activation: torch.Tensor, target: HookTarget) -> torch.Tensor:
         activation = activation.clone()
 
-        if target.neuron_index is not None:
+        hs = _head_slice(target)
+        if hs is not None:
+            if target.token_position is not None:
+                activation[:, target.token_position, hs] = 0.0
+            else:
+                activation[..., hs] = 0.0
+        elif target.neuron_index is not None:
             activation[..., target.neuron_index] = 0.0
         elif target.token_position is not None:
             activation[:, target.token_position] = 0.0
@@ -90,7 +109,14 @@ class MeanAblation(Intervention):
         activation = activation.clone()
         mean = self.mean_activation.to(activation.device, dtype=activation.dtype)
 
-        if target.neuron_index is not None:
+        hs = _head_slice(target)
+        if hs is not None:
+            if target.token_position is not None:
+                activation[:, target.token_position, hs] = mean[:, target.token_position, hs]
+            else:
+                min_seq = min(activation.shape[1], mean.shape[1])
+                activation[:, :min_seq, hs] = mean[:, :min_seq, hs]
+        elif target.neuron_index is not None:
             activation[..., target.neuron_index] = mean[..., target.neuron_index]
         elif target.token_position is not None:
             activation[:, target.token_position] = mean[:, target.token_position]
@@ -125,7 +151,16 @@ class ActivationPatching(Intervention):
         activation = activation.clone()
         source = self.source_activation.to(activation.device, dtype=activation.dtype)
 
-        if target.neuron_index is not None:
+        hs = _head_slice(target)
+        if hs is not None:
+            if target.token_position is not None:
+                pos = target.token_position
+                if pos < source.shape[1]:
+                    activation[:, pos, hs] = source[:, pos, hs]
+            else:
+                min_seq = min(activation.shape[1], source.shape[1])
+                activation[:, :min_seq, hs] = source[:, :min_seq, hs]
+        elif target.neuron_index is not None:
             activation[..., target.neuron_index] = source[..., target.neuron_index]
         elif target.token_position is not None:
             # Patch at specific position — handle sequence length mismatch

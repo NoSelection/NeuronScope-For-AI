@@ -61,24 +61,38 @@ class ExperimentRunner:
             outputs = self.model(input_ids)
             return outputs.logits
 
+    def _get_head_dim(self) -> int:
+        """Get head_dim from model config for attention head slicing."""
+        text_config = getattr(self.model.config, "text_config", self.model.config)
+        head_dim_cfg = getattr(text_config, "head_dim", None)
+        if head_dim_cfg is not None:
+            return head_dim_cfg
+        num_heads = getattr(text_config, "num_attention_heads", 8)
+        hidden = getattr(text_config, "hidden_size", 2560)
+        return hidden // num_heads
+
     def _spec_to_target(self, spec: InterventionSpec) -> HookTarget:
         """Convert an InterventionSpec to a HookTarget."""
+        head_dim = self._get_head_dim() if spec.target_head is not None else None
         return HookTarget(
             layer=spec.target_layer,
             component=ComponentType(spec.target_component),
             head=spec.target_head,
             token_position=spec.target_position,
             neuron_index=spec.target_neuron,
+            head_dim=head_dim,
         )
 
     def _capture_to_target(self, spec: CaptureSpec) -> HookTarget:
         """Convert a CaptureSpec to a HookTarget."""
+        head_dim = self._get_head_dim() if spec.head is not None else None
         return HookTarget(
             layer=spec.layer,
             component=ComponentType(spec.component),
             head=spec.head,
             token_position=spec.token_position,
             neuron_index=spec.neuron_index,
+            head_dim=head_dim,
         )
 
     def _build_intervention(
@@ -90,13 +104,7 @@ class ExperimentRunner:
         if spec.intervention_type == "zero":
             return ZeroAblation()
         elif spec.intervention_type == "mean":
-            mean_key = HookTarget(
-                layer=spec.target_layer,
-                component=ComponentType(spec.target_component),
-                head=spec.target_head,
-                token_position=spec.target_position,
-                neuron_index=spec.target_neuron,
-            ).to_key()
+            mean_key = self._spec_to_target(spec).to_key()
             mean_tensor = source_activations.get(mean_key, torch.zeros(1))
             return MeanAblation(mean_activation=mean_tensor)
         elif spec.intervention_type == "patch":
@@ -263,6 +271,45 @@ class ExperimentRunner:
             except RuntimeError as e:
                 if "out of memory" in str(e).lower() or "GPU" in str(e):
                     console.print(f"  [red]OOM at layer {layer}[/red] — stopping sweep early")
+                    torch.cuda.empty_cache()
+                    if not results:
+                        raise
+                    break
+                raise
+
+        return results
+
+    def run_head_sweep(
+        self,
+        base_config: ExperimentConfig,
+        layer: int,
+        heads: list[int] | None = None,
+    ) -> list[ExperimentResult]:
+        """Run the same intervention across all attention heads in a single layer.
+
+        Returns one result per head, enabling per-head causal attribution
+        within the attention mechanism.
+        """
+        if heads is None:
+            text_config = getattr(self.model.config, "text_config", self.model.config)
+            num_heads = getattr(text_config, "num_attention_heads", 8)
+            heads = list(range(num_heads))
+
+        results = []
+        for head in heads:
+            head_config = base_config.model_copy(deep=True)
+            head_config.name = f"{base_config.name}_L{layer}_H{head}"
+            for spec in head_config.interventions:
+                spec.target_layer = layer
+                spec.target_head = head
+                spec.target_component = "attn_output"
+
+            try:
+                result = self.run(head_config)
+                results.append(result)
+            except RuntimeError as e:
+                if "out of memory" in str(e).lower() or "GPU" in str(e):
+                    console.print(f"  [red]OOM at head {head}[/red] — stopping sweep early")
                     torch.cuda.empty_cache()
                     if not results:
                         raise

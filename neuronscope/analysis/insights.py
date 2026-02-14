@@ -238,3 +238,90 @@ def generate_sweep_insights(results: list[ExperimentResult]) -> list[dict]:
         })
 
     return insights
+
+
+def generate_head_sweep_insights(
+    results: list[ExperimentResult], layer: int
+) -> list[dict]:
+    """Generate insights from a head sweep within a single layer."""
+    if not results:
+        return []
+
+    insights = []
+
+    kls = [
+        (r.config.interventions[0].target_head, r.kl_divergence)
+        for r in results
+    ]
+    changed = [r for r in results if r.top_token_changed]
+
+    # Peak head
+    peak_head, peak_kl = max(kls, key=lambda x: x[1])
+    insights.append({
+        "type": "critical",
+        "title": f"Head {peak_head} has the strongest causal effect",
+        "detail": (
+            f"In layer {layer}, attention head {peak_head} has KL divergence "
+            f"of {peak_kl:.2f}, making it the most causally important head "
+            f"for this prediction. This head is likely carrying task-specific "
+            f"information that directly influences the output."
+        ),
+    })
+
+    # How many heads changed the output
+    insights.append({
+        "type": "notable" if len(changed) > 0 else "info",
+        "title": f"{len(changed)}/{len(results)} heads flip the prediction",
+        "detail": (
+            f"Ablating {len(changed)} individual head(s) in layer {layer} caused the "
+            f"model's top prediction to change entirely. "
+            + (
+                "Multiple heads are individually critical — the prediction depends on "
+                "several distinct attention patterns working together."
+                if len(changed) > 2
+                else "Only a few heads are individually essential, suggesting the prediction "
+                "relies on specific attention patterns rather than being distributed."
+                if 0 < len(changed) <= 2
+                else "No single head is individually sufficient to change the prediction, "
+                "suggesting the attention heads work redundantly or collaboratively."
+            )
+        ),
+    })
+
+    # Concentration: is the effect concentrated or distributed?
+    avg_kl = sum(kl for _, kl in kls) / len(kls) if kls else 0
+    if avg_kl > 0 and peak_kl > avg_kl * 3:
+        insights.append({
+            "type": "notable",
+            "title": "Effect is concentrated in few heads",
+            "detail": (
+                f"The peak head's KL ({peak_kl:.2f}) is {peak_kl / avg_kl:.1f}x the "
+                f"average ({avg_kl:.2f}). This layer's contribution to the prediction "
+                f"is concentrated in a small number of specialized heads rather than "
+                f"distributed evenly."
+            ),
+        })
+    elif avg_kl > 0.1 and peak_kl < avg_kl * 1.5:
+        insights.append({
+            "type": "info",
+            "title": "Effect is distributed across heads",
+            "detail": (
+                f"All heads have similar KL divergence (avg: {avg_kl:.2f}). "
+                f"This layer's contribution is spread across multiple heads "
+                f"rather than concentrated in a specialist."
+            ),
+        })
+
+    # Explanation of what head ablation means
+    insights.append({
+        "type": "info",
+        "title": "What head ablation tells you",
+        "detail": (
+            "Each attention head independently decides which tokens to focus on. "
+            "By ablating one head at a time, you can identify which 'focus patterns' "
+            "are essential for this prediction. Heads with high KL are attending to "
+            "tokens that carry critical information for the answer."
+        ),
+    })
+
+    return insights
