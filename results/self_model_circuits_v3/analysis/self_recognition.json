@@ -1,0 +1,1535 @@
+{
+  "name": "self_recognition",
+  "analysis": {
+    "layer_9": {
+      "self_vs_control": {
+        "n_triplets": 8,
+        "head_stats": {
+          "0": {
+            "mean_differential_kl": 0.01764,
+            "std": 0.018894,
+            "n_triplets": 8,
+            "wilcoxon_stat": 35.0,
+            "wilcoxon_p": 0.007812,
+            "bootstrap_ci_95": [
+              0.007349,
+              0.031337
+            ],
+            "individual_values": [
+              0.020357,
+              0.005581,
+              0.018045,
+              0.05986,
+              0.021547,
+              -0.001681,
+              0.005963,
+              0.011451
+            ],
+            "significant_fdr_05": true
+          },
+          "1": {
+            "mean_differential_kl": 0.034817,
+            "std": 0.045301,
+            "n_triplets": 8,
+            "wilcoxon_stat": 36.0,
+            "wilcoxon_p": 0.003906,
+            "bootstrap_ci_95": [
+              0.013366,
+              0.067689
+            ],
+            "individual_values": [
+              0.02225,
+              0.039152,
+              0.025608,
+              0.143129,
+              0.008114,
+              0.001988,
+              0.012432,
+              0.025859
+            ],
+            "significant_fdr_05": true
+          },
+          "2": {
+            "mean_differential_kl": 0.053439,
+            "std": 0.088624,
+            "n_triplets": 8,
+            "wilcoxon_stat": 30.0,
+            "wilcoxon_p": 0.054688,
+            "bootstrap_ci_95": [
+              0.006735,
+              0.115642
+            ],
+            "individual_values": [
+              0.111731,
+              -0.003569,
+              -0.000604,
+              0.250309,
+              0.039426,
+              -0.012801,
+              0.017617,
+              0.025406
+            ],
+            "significant_fdr_05": false
+          },
+          "3": {
+            "mean_differential_kl": 0.027665,
+            "std": 0.058915,
+            "n_triplets": 8,
+            "wilcoxon_stat": 33.0,
+            "wilcoxon_p": 0.019531,
+            "bootstrap_ci_95": [
+              0.002873,
+              0.070156
+            ],
+            "individual_values": [
+              0.025089,
+              0.008798,
+              0.001281,
+              0.171922,
+              -0.0004,
+              -0.000857,
+              0.003654,
+              0.011834
+            ],
+            "significant_fdr_05": true
+          },
+          "4": {
+            "mean_differential_kl": 0.033164,
+            "std": 0.038938,
+            "n_triplets": 8,
+            "wilcoxon_stat": 36.0,
+            "wilcoxon_p": 0.003906,
+            "bootstrap_ci_95": [
+              0.013906,
+              0.061314
+            ],
+            "individual_values": [
+              0.04073,
+              0.002349,
+              0.024161,
+              0.124405,
+              0.031044,
+              0.006036,
+              0.015317,
+              0.021266
+            ],
+            "significant_fdr_05": true
+          },
+          "5": {
+            "mean_differential_kl": 0.01057,
+            "std": 0.019182,
+            "n_triplets": 8,
+            "wilcoxon_stat": 25.0,
+            "wilcoxon_p": 0.191406,
+            "bootstrap_ci_95": [
+              -0.001382,
+              0.022856
+            ],
+            "individual_values": [
+              0.029118,
+              -0.002638,
+              -0.011058,
+              0.040127,
+              0.006559,
+              -0.004376,
+              -0.00175,
+              0.028581
+            ],
+            "significant_fdr_05": false
+          },
+          "6": {
+            "mean_differential_kl": 0.006867,
+            "std": 0.017297,
+            "n_triplets": 8,
+            "wilcoxon_stat": 24.0,
+            "wilcoxon_p": 0.230469,
+            "bootstrap_ci_95": [
+              -0.002536,
+              0.019079
+            ],
+            "individual_values": [
+              0.008124,
+              -0.005242,
+              -0.010888,
+              0.045322,
+              -0.000951,
+              0.004551,
+              0.000467,
+              0.013554
+            ],
+            "significant_fdr_05": false
+          },
+          "7": {
+            "mean_differential_kl": 0.008468,
+            "std": 0.018559,
+            "n_triplets": 8,
+            "wilcoxon_stat": 27.0,
+            "wilcoxon_p": 0.125,
+            "bootstrap_ci_95": [
+              -0.000328,
+              0.021923
+            ],
+            "individual_values": [
+              0.007851,
+              0.010238,
+              0.001886,
+              0.052782,
+              -0.002898,
+              -0.004173,
+              0.001699,
+              0.00036
+            ],
+            "significant_fdr_05": false
+          }
+        }
+      },
+      "self_vs_third_person": {
+        "n_triplets": 8,
+        "head_stats": {
+          "0": {
+            "mean_differential_kl": -0.037989,
+            "std": 0.090382,
+            "n_triplets": 8,
+            "wilcoxon_stat": 18.0,
+            "wilcoxon_p": 0.527344,
+            "bootstrap_ci_95": [
+              -0.100891,
+              0.00916
+            ],
+            "individual_values": [
+              -0.005353,
+              0.003686,
+              -0.110264,
+              -0.236286,
+              0.021052,
+              0.000952,
+              0.009983,
+              0.01232
+            ],
+            "significant_fdr_05": false
+          },
+          "1": {
+            "mean_differential_kl": -0.103068,
+            "std": 0.307568,
+            "n_triplets": 8,
+            "wilcoxon_stat": 21.0,
+            "wilcoxon_p": 0.371094,
+            "bootstrap_ci_95": [
+              -0.322464,
+              0.01099
+            ],
+            "individual_values": [
+              0.01539,
+              0.021622,
+              -0.000444,
+              -0.863814,
+              -0.007003,
+              -0.008557,
+              0.008475,
+              0.009788
+            ],
+            "significant_fdr_05": false
+          },
+          "2": {
+            "mean_differential_kl": -0.003165,
+            "std": 0.121308,
+            "n_triplets": 8,
+            "wilcoxon_stat": 28.0,
+            "wilcoxon_p": 0.097656,
+            "bootstrap_ci_95": [
+              -0.092645,
+              0.057653
+            ],
+            "individual_values": [
+              0.112908,
+              0.014711,
+              0.006488,
+              -0.290499,
+              0.06129,
+              0.009193,
+              0.02745,
+              0.033137
+            ],
+            "significant_fdr_05": false
+          },
+          "3": {
+            "mean_differential_kl": 0.020742,
+            "std": 0.031876,
+            "n_triplets": 8,
+            "wilcoxon_stat": 33.0,
+            "wilcoxon_p": 0.019531,
+            "bootstrap_ci_95": [
+              0.004212,
+              0.043446
+            ],
+            "individual_values": [
+              0.028381,
+              0.013998,
+              -0.010188,
+              0.094339,
+              0.006392,
+              0.002854,
+              0.010322,
+              0.019839
+            ],
+            "significant_fdr_05": false
+          },
+          "4": {
+            "mean_differential_kl": 0.018303,
+            "std": 0.009512,
+            "n_triplets": 8,
+            "wilcoxon_stat": 36.0,
+            "wilcoxon_p": 0.003906,
+            "bootstrap_ci_95": [
+              0.012259,
+              0.024452
+            ],
+            "individual_values": [
+              0.025408,
+              0.00758,
+              0.018705,
+              0.022526,
+              0.033918,
+              0.0047,
+              0.013921,
+              0.019667
+            ],
+            "significant_fdr_05": true
+          },
+          "5": {
+            "mean_differential_kl": 0.001203,
+            "std": 0.026473,
+            "n_triplets": 8,
+            "wilcoxon_stat": 27.0,
+            "wilcoxon_p": 0.125,
+            "bootstrap_ci_95": [
+              -0.017415,
+              0.01544
+            ],
+            "individual_values": [
+              0.027024,
+              0.002974,
+              0.002438,
+              -0.057963,
+              0.004223,
+              -0.000584,
+              0.003551,
+              0.027961
+            ],
+            "significant_fdr_05": false
+          },
+          "6": {
+            "mean_differential_kl": -0.001668,
+            "std": 0.026066,
+            "n_triplets": 8,
+            "wilcoxon_stat": 21.0,
+            "wilcoxon_p": 0.371094,
+            "bootstrap_ci_95": [
+              -0.020327,
+              0.01212
+            ],
+            "individual_values": [
+              0.011171,
+              0.004633,
+              -0.020248,
+              -0.059375,
+              0.012519,
+              0.012167,
+              0.007434,
+              0.018353
+            ],
+            "significant_fdr_05": false
+          },
+          "7": {
+            "mean_differential_kl": 0.002118,
+            "std": 0.009878,
+            "n_triplets": 8,
+            "wilcoxon_stat": 17.0,
+            "wilcoxon_p": 0.578125,
+            "bootstrap_ci_95": [
+              -0.003007,
+              0.009195
+            ],
+            "individual_values": [
+              -0.004543,
+              0.006879,
+              -0.00533,
+              0.024549,
+              -0.002379,
+              -0.00248,
+              -0.001888,
+              0.002136
+            ],
+            "significant_fdr_05": false
+          }
+        }
+      },
+      "ai_specific": {
+        "0": {
+          "mean_self_kl": 0.0343,
+          "mean_ctrl_kl": 0.0167,
+          "mean_third_kl": 0.0723,
+          "mean_ai_residual": 0.0176,
+          "mean_pronoun_effect": -0.0556,
+          "ai_residual_p": 0.007812,
+          "ai_residual_values": [
+            0.0204,
+            0.0056,
+            0.018,
+            0.0599,
+            0.0215,
+            -0.0017,
+            0.006,
+            0.0115
+          ]
+        },
+        "1": {
+          "mean_self_kl": 0.0702,
+          "mean_ctrl_kl": 0.0354,
+          "mean_third_kl": 0.1733,
+          "mean_ai_residual": 0.0348,
+          "mean_pronoun_effect": -0.1379,
+          "ai_residual_p": 0.003906,
+          "ai_residual_values": [
+            0.0223,
+            0.0392,
+            0.0256,
+            0.1431,
+            0.0081,
+            0.002,
+            0.0124,
+            0.0259
+          ]
+        },
+        "2": {
+          "mean_self_kl": 0.0834,
+          "mean_ctrl_kl": 0.03,
+          "mean_third_kl": 0.0866,
+          "mean_ai_residual": 0.0534,
+          "mean_pronoun_effect": -0.0566,
+          "ai_residual_p": 0.054688,
+          "ai_residual_values": [
+            0.1117,
+            -0.0036,
+            -0.0006,
+            0.2503,
+            0.0394,
+            -0.0128,
+            0.0176,
+            0.0254
+          ]
+        },
+        "3": {
+          "mean_self_kl": 0.0473,
+          "mean_ctrl_kl": 0.0196,
+          "mean_third_kl": 0.0265,
+          "mean_ai_residual": 0.0277,
+          "mean_pronoun_effect": -0.0069,
+          "ai_residual_p": 0.019531,
+          "ai_residual_values": [
+            0.0251,
+            0.0088,
+            0.0013,
+            0.1719,
+            -0.0004,
+            -0.0009,
+            0.0037,
+            0.0118
+          ]
+        },
+        "4": {
+          "mean_self_kl": 0.0514,
+          "mean_ctrl_kl": 0.0183,
+          "mean_third_kl": 0.0331,
+          "mean_ai_residual": 0.0332,
+          "mean_pronoun_effect": -0.0149,
+          "ai_residual_p": 0.003906,
+          "ai_residual_values": [
+            0.0407,
+            0.0023,
+            0.0242,
+            0.1244,
+            0.031,
+            0.006,
+            0.0153,
+            0.0213
+          ]
+        },
+        "5": {
+          "mean_self_kl": 0.031,
+          "mean_ctrl_kl": 0.0204,
+          "mean_third_kl": 0.0298,
+          "mean_ai_residual": 0.0106,
+          "mean_pronoun_effect": -0.0094,
+          "ai_residual_p": 0.191406,
+          "ai_residual_values": [
+            0.0291,
+            -0.0026,
+            -0.0111,
+            0.0401,
+            0.0066,
+            -0.0044,
+            -0.0017,
+            0.0286
+          ]
+        },
+        "6": {
+          "mean_self_kl": 0.0318,
+          "mean_ctrl_kl": 0.025,
+          "mean_third_kl": 0.0335,
+          "mean_ai_residual": 0.0069,
+          "mean_pronoun_effect": -0.0085,
+          "ai_residual_p": 0.230469,
+          "ai_residual_values": [
+            0.0081,
+            -0.0052,
+            -0.0109,
+            0.0453,
+            -0.001,
+            0.0046,
+            0.0005,
+            0.0136
+          ]
+        },
+        "7": {
+          "mean_self_kl": 0.0227,
+          "mean_ctrl_kl": 0.0142,
+          "mean_third_kl": 0.0206,
+          "mean_ai_residual": 0.0085,
+          "mean_pronoun_effect": -0.0064,
+          "ai_residual_p": 0.125,
+          "ai_residual_values": [
+            0.0079,
+            0.0102,
+            0.0019,
+            0.0528,
+            -0.0029,
+            -0.0042,
+            0.0017,
+            0.0004
+          ]
+        }
+      }
+    },
+    "layer_26": {
+      "self_vs_control": {
+        "n_triplets": 8,
+        "head_stats": {
+          "0": {
+            "mean_differential_kl": -0.000135,
+            "std": 0.002655,
+            "n_triplets": 8,
+            "wilcoxon_stat": 18.0,
+            "wilcoxon_p": 0.527344,
+            "bootstrap_ci_95": [
+              -0.001895,
+              0.001495
+            ],
+            "individual_values": [
+              0.002418,
+              0.002639,
+              -0.001714,
+              -0.003497,
+              0.000477,
+              -0.004135,
+              0.001843,
+              0.00089
+            ],
+            "significant_fdr_05": false
+          },
+          "1": {
+            "mean_differential_kl": -0.000102,
+            "std": 0.002619,
+            "n_triplets": 8,
+            "wilcoxon_stat": 23.0,
+            "wilcoxon_p": 0.273438,
+            "bootstrap_ci_95": [
+              -0.00195,
+              0.00136
+            ],
+            "individual_values": [
+              0.000324,
+              0.002239,
+              -0.001985,
+              -0.005597,
+              0.002249,
+              0.001601,
+              0.000287,
+              7e-05
+            ],
+            "significant_fdr_05": false
+          },
+          "2": {
+            "mean_differential_kl": 0.018676,
+            "std": 0.03725,
+            "n_triplets": 8,
+            "wilcoxon_stat": 27.0,
+            "wilcoxon_p": 0.125,
+            "bootstrap_ci_95": [
+              0.000386,
+              0.044966
+            ],
+            "individual_values": [
+              0.037905,
+              0.005018,
+              -0.002576,
+              0.104913,
+              -0.000742,
+              0.000321,
+              -0.00063,
+              0.005201
+            ],
+            "significant_fdr_05": false
+          },
+          "3": {
+            "mean_differential_kl": 0.01455,
+            "std": 0.024618,
+            "n_triplets": 8,
+            "wilcoxon_stat": 27.0,
+            "wilcoxon_p": 0.125,
+            "bootstrap_ci_95": [
+              0.000682,
+              0.031669
+            ],
+            "individual_values": [
+              0.064595,
+              0.004778,
+              0.000822,
+              0.040111,
+              -0.001823,
+              -0.001393,
+              -0.001768,
+              0.011075
+            ],
+            "significant_fdr_05": false
+          },
+          "4": {
+            "mean_differential_kl": -2.2e-05,
+            "std": 0.002064,
+            "n_triplets": 8,
+            "wilcoxon_stat": 18.0,
+            "wilcoxon_p": 0.527344,
+            "bootstrap_ci_95": [
+              -0.001391,
+              0.001277
+            ],
+            "individual_values": [
+              0.001952,
+              0.000186,
+              -0.003566,
+              0.00086,
+              -0.00195,
+              -0.000278,
+              -0.000308,
+              0.002925
+            ],
+            "significant_fdr_05": false
+          },
+          "5": {
+            "mean_differential_kl": 0.000981,
+            "std": 0.002854,
+            "n_triplets": 8,
+            "wilcoxon_stat": 24.0,
+            "wilcoxon_p": 0.230469,
+            "bootstrap_ci_95": [
+              -0.000726,
+              0.002944
+            ],
+            "individual_values": [
+              0.006567,
+              0.003338,
+              -0.000141,
+              0.000662,
+              -0.002524,
+              -0.00157,
+              0.000755,
+              0.000759
+            ],
+            "significant_fdr_05": false
+          },
+          "6": {
+            "mean_differential_kl": 0.003843,
+            "std": 0.00833,
+            "n_triplets": 8,
+            "wilcoxon_stat": 27.0,
+            "wilcoxon_p": 0.125,
+            "bootstrap_ci_95": [
+              -0.000897,
+              0.009554
+            ],
+            "individual_values": [
+              0.021107,
+              0.003985,
+              -0.000757,
+              0.00999,
+              -0.000727,
+              -0.006031,
+              0.001296,
+              0.00188
+            ],
+            "significant_fdr_05": false
+          },
+          "7": {
+            "mean_differential_kl": 0.025832,
+            "std": 0.05499,
+            "n_triplets": 8,
+            "wilcoxon_stat": 30.0,
+            "wilcoxon_p": 0.054688,
+            "bootstrap_ci_95": [
+              -0.000495,
+              0.065365
+            ],
+            "individual_values": [
+              0.030055,
+              0.009884,
+              -0.018964,
+              0.15722,
+              0.003769,
+              0.005338,
+              -0.000249,
+              0.019605
+            ],
+            "significant_fdr_05": false
+          }
+        }
+      },
+      "self_vs_third_person": {
+        "n_triplets": 8,
+        "head_stats": {
+          "0": {
+            "mean_differential_kl": -0.000312,
+            "std": 0.00377,
+            "n_triplets": 8,
+            "wilcoxon_stat": 18.0,
+            "wilcoxon_p": 0.527344,
+            "bootstrap_ci_95": [
+              -0.00297,
+              0.001927
+            ],
+            "individual_values": [
+              0.003713,
+              0.003242,
+              -0.001286,
+              -0.00816,
+              -0.001531,
+              -2.7e-05,
+              -0.000664,
+              0.002222
+            ],
+            "significant_fdr_05": false
+          },
+          "1": {
+            "mean_differential_kl": 0.000744,
+            "std": 0.002202,
+            "n_triplets": 8,
+            "wilcoxon_stat": 22.0,
+            "wilcoxon_p": 0.320312,
+            "bootstrap_ci_95": [
+              -0.000581,
+              0.002189
+            ],
+            "individual_values": [
+              -0.000317,
+              0.004402,
+              -0.001594,
+              0.002224,
+              0.002922,
+              -0.000332,
+              -0.001635,
+              0.000278
+            ],
+            "significant_fdr_05": false
+          },
+          "2": {
+            "mean_differential_kl": -0.022208,
+            "std": 0.073418,
+            "n_triplets": 8,
+            "wilcoxon_stat": 7.0,
+            "wilcoxon_p": 0.945312,
+            "bootstrap_ci_95": [
+              -0.076289,
+              0.010537
+            ],
+            "individual_values": [
+              0.02994,
+              -0.000213,
+              -0.000113,
+              -0.201922,
+              -0.000637,
+              -0.001549,
+              -0.001578,
+              -0.001589
+            ],
+            "significant_fdr_05": false
+          },
+          "3": {
+            "mean_differential_kl": 0.013326,
+            "std": 0.023795,
+            "n_triplets": 8,
+            "wilcoxon_stat": 32.0,
+            "wilcoxon_p": 0.027344,
+            "bootstrap_ci_95": [
+              0.001276,
+              0.030159
+            ],
+            "individual_values": [
+              0.067549,
+              0.003429,
+              0.002248,
+              0.027567,
+              -0.002774,
+              0.000977,
+              0.001951,
+              0.005665
+            ],
+            "significant_fdr_05": false
+          },
+          "4": {
+            "mean_differential_kl": -0.000167,
+            "std": 0.002315,
+            "n_triplets": 8,
+            "wilcoxon_stat": 20.0,
+            "wilcoxon_p": 0.421875,
+            "bootstrap_ci_95": [
+              -0.001745,
+              0.001228
+            ],
+            "individual_values": [
+              0.000666,
+              0.003211,
+              -0.00035,
+              -0.004658,
+              -0.001948,
+              0.000154,
+              0.000571,
+              0.001015
+            ],
+            "significant_fdr_05": false
+          },
+          "5": {
+            "mean_differential_kl": 0.001063,
+            "std": 0.002883,
+            "n_triplets": 8,
+            "wilcoxon_stat": 25.0,
+            "wilcoxon_p": 0.191406,
+            "bootstrap_ci_95": [
+              -0.000484,
+              0.003177
+            ],
+            "individual_values": [
+              0.007549,
+              0.002251,
+              0.000241,
+              4.9e-05,
+              -0.00183,
+              0.000387,
+              -0.000971,
+              0.000825
+            ],
+            "significant_fdr_05": false
+          },
+          "6": {
+            "mean_differential_kl": -0.000444,
+            "std": 0.008638,
+            "n_triplets": 8,
+            "wilcoxon_stat": 11.0,
+            "wilcoxon_p": 0.84375,
+            "bootstrap_ci_95": [
+              -0.005862,
+              0.0058
+            ],
+            "individual_values": [
+              0.017371,
+              -0.001272,
+              -0.000317,
+              -0.01427,
+              0.000935,
+              -0.003411,
+              -0.001992,
+              -0.000594
+            ],
+            "significant_fdr_05": false
+          },
+          "7": {
+            "mean_differential_kl": -0.029992,
+            "std": 0.024479,
+            "n_triplets": 8,
+            "wilcoxon_stat": 1.0,
+            "wilcoxon_p": 0.996094,
+            "bootstrap_ci_95": [
+              -0.045614,
+              -0.013894
+            ],
+            "individual_values": [
+              0.014646,
+              -0.022313,
+              -0.023588,
+              -0.069327,
+              -0.030167,
+              -0.025417,
+              -0.053086,
+              -0.030682
+            ],
+            "significant_fdr_05": false
+          }
+        }
+      },
+      "ai_specific": {
+        "0": {
+          "mean_self_kl": 0.0085,
+          "mean_ctrl_kl": 0.0086,
+          "mean_third_kl": 0.0088,
+          "mean_ai_residual": -0.0001,
+          "mean_pronoun_effect": -0.0002,
+          "ai_residual_p": 0.527344,
+          "ai_residual_values": [
+            0.0024,
+            0.0026,
+            -0.0017,
+            -0.0035,
+            0.0005,
+            -0.0041,
+            0.0018,
+            0.0009
+          ]
+        },
+        "1": {
+          "mean_self_kl": 0.0093,
+          "mean_ctrl_kl": 0.0094,
+          "mean_third_kl": 0.0085,
+          "mean_ai_residual": -0.0001,
+          "mean_pronoun_effect": 0.0008,
+          "ai_residual_p": 0.273438,
+          "ai_residual_values": [
+            0.0003,
+            0.0022,
+            -0.002,
+            -0.0056,
+            0.0022,
+            0.0016,
+            0.0003,
+            0.0001
+          ]
+        },
+        "2": {
+          "mean_self_kl": 0.0291,
+          "mean_ctrl_kl": 0.0104,
+          "mean_third_kl": 0.0513,
+          "mean_ai_residual": 0.0187,
+          "mean_pronoun_effect": -0.0409,
+          "ai_residual_p": 0.125,
+          "ai_residual_values": [
+            0.0379,
+            0.005,
+            -0.0026,
+            0.1049,
+            -0.0007,
+            0.0003,
+            -0.0006,
+            0.0052
+          ]
+        },
+        "3": {
+          "mean_self_kl": 0.0268,
+          "mean_ctrl_kl": 0.0122,
+          "mean_third_kl": 0.0135,
+          "mean_ai_residual": 0.0145,
+          "mean_pronoun_effect": -0.0012,
+          "ai_residual_p": 0.125,
+          "ai_residual_values": [
+            0.0646,
+            0.0048,
+            0.0008,
+            0.0401,
+            -0.0018,
+            -0.0014,
+            -0.0018,
+            0.0111
+          ]
+        },
+        "4": {
+          "mean_self_kl": 0.0074,
+          "mean_ctrl_kl": 0.0074,
+          "mean_third_kl": 0.0075,
+          "mean_ai_residual": -0.0,
+          "mean_pronoun_effect": -0.0001,
+          "ai_residual_p": 0.527344,
+          "ai_residual_values": [
+            0.002,
+            0.0002,
+            -0.0036,
+            0.0009,
+            -0.002,
+            -0.0003,
+            -0.0003,
+            0.0029
+          ]
+        },
+        "5": {
+          "mean_self_kl": 0.0083,
+          "mean_ctrl_kl": 0.0073,
+          "mean_third_kl": 0.0072,
+          "mean_ai_residual": 0.001,
+          "mean_pronoun_effect": 0.0001,
+          "ai_residual_p": 0.230469,
+          "ai_residual_values": [
+            0.0066,
+            0.0033,
+            -0.0001,
+            0.0007,
+            -0.0025,
+            -0.0016,
+            0.0008,
+            0.0008
+          ]
+        },
+        "6": {
+          "mean_self_kl": 0.0255,
+          "mean_ctrl_kl": 0.0217,
+          "mean_third_kl": 0.026,
+          "mean_ai_residual": 0.0038,
+          "mean_pronoun_effect": -0.0043,
+          "ai_residual_p": 0.125,
+          "ai_residual_values": [
+            0.0211,
+            0.004,
+            -0.0008,
+            0.01,
+            -0.0007,
+            -0.006,
+            0.0013,
+            0.0019
+          ]
+        },
+        "7": {
+          "mean_self_kl": 0.1217,
+          "mean_ctrl_kl": 0.0958,
+          "mean_third_kl": 0.1517,
+          "mean_ai_residual": 0.0258,
+          "mean_pronoun_effect": -0.0558,
+          "ai_residual_p": 0.054688,
+          "ai_residual_values": [
+            0.0301,
+            0.0099,
+            -0.019,
+            0.1572,
+            0.0038,
+            0.0053,
+            -0.0002,
+            0.0196
+          ]
+        }
+      }
+    },
+    "layer_27": {
+      "self_vs_control": {
+        "n_triplets": 8,
+        "head_stats": {
+          "0": {
+            "mean_differential_kl": -0.004825,
+            "std": 0.020656,
+            "n_triplets": 8,
+            "wilcoxon_stat": 13.0,
+            "wilcoxon_p": 0.769531,
+            "bootstrap_ci_95": [
+              -0.01949,
+              0.006987
+            ],
+            "individual_values": [
+              0.014569,
+              -0.002667,
+              0.000366,
+              0.017195,
+              -0.049046,
+              -0.015585,
+              -0.003042,
+              -0.000394
+            ],
+            "significant_fdr_05": false
+          },
+          "1": {
+            "mean_differential_kl": 0.012645,
+            "std": 0.022871,
+            "n_triplets": 8,
+            "wilcoxon_stat": 30.0,
+            "wilcoxon_p": 0.054688,
+            "bootstrap_ci_95": [
+              -0.000275,
+              0.02926
+            ],
+            "individual_values": [
+              0.063344,
+              0.013936,
+              0.015866,
+              0.007339,
+              -0.014108,
+              -0.003446,
+              0.00405,
+              0.014178
+            ],
+            "significant_fdr_05": false
+          },
+          "2": {
+            "mean_differential_kl": 0.003635,
+            "std": 0.006738,
+            "n_triplets": 8,
+            "wilcoxon_stat": 27.0,
+            "wilcoxon_p": 0.125,
+            "bootstrap_ci_95": [
+              -0.000394,
+              0.00842
+            ],
+            "individual_values": [
+              0.016529,
+              0.00395,
+              -0.001448,
+              -0.004658,
+              -0.000562,
+              0.005507,
+              0.000842,
+              0.008921
+            ],
+            "significant_fdr_05": false
+          },
+          "3": {
+            "mean_differential_kl": 0.023027,
+            "std": 0.039321,
+            "n_triplets": 8,
+            "wilcoxon_stat": 35.0,
+            "wilcoxon_p": 0.007812,
+            "bootstrap_ci_95": [
+              0.002903,
+              0.050386
+            ],
+            "individual_values": [
+              0.111444,
+              0.01031,
+              0.001299,
+              0.049503,
+              0.008786,
+              -0.001141,
+              0.001908,
+              0.002105
+            ],
+            "significant_fdr_05": false
+          },
+          "4": {
+            "mean_differential_kl": -0.008989,
+            "std": 0.034003,
+            "n_triplets": 8,
+            "wilcoxon_stat": 21.0,
+            "wilcoxon_p": 0.371094,
+            "bootstrap_ci_95": [
+              -0.033963,
+              0.005764
+            ],
+            "individual_values": [
+              0.014259,
+              -0.002054,
+              -0.000377,
+              0.005567,
+              -0.092164,
+              0.002421,
+              -0.000489,
+              0.000924
+            ],
+            "significant_fdr_05": false
+          },
+          "5": {
+            "mean_differential_kl": 0.0067,
+            "std": 0.029384,
+            "n_triplets": 8,
+            "wilcoxon_stat": 26.0,
+            "wilcoxon_p": 0.15625,
+            "bootstrap_ci_95": [
+              -0.012907,
+              0.026134
+            ],
+            "individual_values": [
+              0.060131,
+              0.010889,
+              -0.000701,
+              0.013256,
+              -0.047132,
+              0.000326,
+              0.01646,
+              0.000368
+            ],
+            "significant_fdr_05": false
+          },
+          "6": {
+            "mean_differential_kl": 0.000313,
+            "std": 0.002558,
+            "n_triplets": 8,
+            "wilcoxon_stat": 20.0,
+            "wilcoxon_p": 0.421875,
+            "bootstrap_ci_95": [
+              -0.001361,
+              0.001914
+            ],
+            "individual_values": [
+              0.001877,
+              0.0028,
+              -0.003985,
+              0.000383,
+              0.003932,
+              -8e-06,
+              -0.000689,
+              -0.001802
+            ],
+            "significant_fdr_05": false
+          },
+          "7": {
+            "mean_differential_kl": -0.001074,
+            "std": 0.014152,
+            "n_triplets": 8,
+            "wilcoxon_stat": 23.0,
+            "wilcoxon_p": 0.273438,
+            "bootstrap_ci_95": [
+              -0.011538,
+              0.005784
+            ],
+            "individual_values": [
+              0.007805,
+              0.00468,
+              0.004134,
+              0.010271,
+              -0.000535,
+              0.000182,
+              -0.034718,
+              -0.000409
+            ],
+            "significant_fdr_05": false
+          }
+        }
+      },
+      "self_vs_third_person": {
+        "n_triplets": 8,
+        "head_stats": {
+          "0": {
+            "mean_differential_kl": -0.016374,
+            "std": 0.018688,
+            "n_triplets": 8,
+            "wilcoxon_stat": 4.0,
+            "wilcoxon_p": 0.980469,
+            "bootstrap_ci_95": [
+              -0.027057,
+              -0.003364
+            ],
+            "individual_values": [
+              -0.016663,
+              -0.024176,
+              -0.000452,
+              -0.040361,
+              0.020795,
+              -0.026095,
+              -0.019285,
+              -0.024759
+            ],
+            "significant_fdr_05": false
+          },
+          "1": {
+            "mean_differential_kl": 0.009515,
+            "std": 0.030835,
+            "n_triplets": 8,
+            "wilcoxon_stat": 19.0,
+            "wilcoxon_p": 0.472656,
+            "bootstrap_ci_95": [
+              -0.004886,
+              0.03236
+            ],
+            "individual_values": [
+              0.0834,
+              0.01063,
+              -0.005963,
+              -0.012652,
+              -2.4e-05,
+              -0.007219,
+              -2.5e-05,
+              0.007973
+            ],
+            "significant_fdr_05": false
+          },
+          "2": {
+            "mean_differential_kl": -0.003627,
+            "std": 0.005683,
+            "n_triplets": 8,
+            "wilcoxon_stat": 5.0,
+            "wilcoxon_p": 0.972656,
+            "bootstrap_ci_95": [
+              -0.007719,
+              -0.000486
+            ],
+            "individual_values": [
+              0.001148,
+              -0.005797,
+              -0.003206,
+              -0.016258,
+              -0.000638,
+              -0.002495,
+              -0.003489,
+              0.001721
+            ],
+            "significant_fdr_05": false
+          },
+          "3": {
+            "mean_differential_kl": 0.006942,
+            "std": 0.022868,
+            "n_triplets": 8,
+            "wilcoxon_stat": 19.0,
+            "wilcoxon_p": 0.472656,
+            "bootstrap_ci_95": [
+              -0.003136,
+              0.023725
+            ],
+            "individual_values": [
+              0.062556,
+              0.005263,
+              -0.003371,
+              -0.00062,
+              0.004513,
+              -0.002569,
+              -0.002457,
+              -0.007782
+            ],
+            "significant_fdr_05": false
+          },
+          "4": {
+            "mean_differential_kl": -0.006044,
+            "std": 0.014959,
+            "n_triplets": 8,
+            "wilcoxon_stat": 10.0,
+            "wilcoxon_p": 0.875,
+            "bootstrap_ci_95": [
+              -0.016828,
+              0.002968
+            ],
+            "individual_values": [
+              -0.037063,
+              0.000177,
+              0.000488,
+              -0.002614,
+              0.015975,
+              -0.00662,
+              -0.007925,
+              -0.010768
+            ],
+            "significant_fdr_05": false
+          },
+          "5": {
+            "mean_differential_kl": 0.002317,
+            "std": 0.009673,
+            "n_triplets": 8,
+            "wilcoxon_stat": 23.0,
+            "wilcoxon_p": 0.273438,
+            "bootstrap_ci_95": [
+              -0.003724,
+              0.008701
+            ],
+            "individual_values": [
+              0.005495,
+              0.008892,
+              -0.004281,
+              -0.009358,
+              0.017053,
+              -0.006872,
+              0.011411,
+              -0.003807
+            ],
+            "significant_fdr_05": false
+          },
+          "6": {
+            "mean_differential_kl": 0.004548,
+            "std": 0.005492,
+            "n_triplets": 8,
+            "wilcoxon_stat": 31.0,
+            "wilcoxon_p": 0.039062,
+            "bootstrap_ci_95": [
+              0.000772,
+              0.007718
+            ],
+            "individual_values": [
+              0.00923,
+              0.008666,
+              -0.001604,
+              -0.005599,
+              0.008331,
+              0.008626,
+              0.004855,
+              0.003884
+            ],
+            "significant_fdr_05": false
+          },
+          "7": {
+            "mean_differential_kl": -0.001047,
+            "std": 0.004601,
+            "n_triplets": 8,
+            "wilcoxon_stat": 13.0,
+            "wilcoxon_p": 0.769531,
+            "bootstrap_ci_95": [
+              -0.003969,
+              0.002013
+            ],
+            "individual_values": [
+              0.00642,
+              0.001043,
+              0.003746,
+              -0.003996,
+              -0.007188,
+              -0.004601,
+              -0.00038,
+              -0.00342
+            ],
+            "significant_fdr_05": false
+          }
+        }
+      },
+      "ai_specific": {
+        "0": {
+          "mean_self_kl": 0.1681,
+          "mean_ctrl_kl": 0.173,
+          "mean_third_kl": 0.1845,
+          "mean_ai_residual": -0.0048,
+          "mean_pronoun_effect": -0.0115,
+          "ai_residual_p": 0.769531,
+          "ai_residual_values": [
+            0.0146,
+            -0.0027,
+            0.0004,
+            0.0172,
+            -0.049,
+            -0.0156,
+            -0.003,
+            -0.0004
+          ]
+        },
+        "1": {
+          "mean_self_kl": 0.0411,
+          "mean_ctrl_kl": 0.0285,
+          "mean_third_kl": 0.0316,
+          "mean_ai_residual": 0.0126,
+          "mean_pronoun_effect": -0.0031,
+          "ai_residual_p": 0.054688,
+          "ai_residual_values": [
+            0.0633,
+            0.0139,
+            0.0159,
+            0.0073,
+            -0.0141,
+            -0.0034,
+            0.004,
+            0.0142
+          ]
+        },
+        "2": {
+          "mean_self_kl": 0.0151,
+          "mean_ctrl_kl": 0.0115,
+          "mean_third_kl": 0.0188,
+          "mean_ai_residual": 0.0036,
+          "mean_pronoun_effect": -0.0073,
+          "ai_residual_p": 0.125,
+          "ai_residual_values": [
+            0.0165,
+            0.004,
+            -0.0014,
+            -0.0047,
+            -0.0006,
+            0.0055,
+            0.0008,
+            0.0089
+          ]
+        },
+        "3": {
+          "mean_self_kl": 0.0403,
+          "mean_ctrl_kl": 0.0173,
+          "mean_third_kl": 0.0334,
+          "mean_ai_residual": 0.023,
+          "mean_pronoun_effect": -0.0161,
+          "ai_residual_p": 0.007812,
+          "ai_residual_values": [
+            0.1114,
+            0.0103,
+            0.0013,
+            0.0495,
+            0.0088,
+            -0.0011,
+            0.0019,
+            0.0021
+          ]
+        },
+        "4": {
+          "mean_self_kl": 0.0227,
+          "mean_ctrl_kl": 0.0317,
+          "mean_third_kl": 0.0287,
+          "mean_ai_residual": -0.009,
+          "mean_pronoun_effect": 0.0029,
+          "ai_residual_p": 0.371094,
+          "ai_residual_values": [
+            0.0143,
+            -0.0021,
+            -0.0004,
+            0.0056,
+            -0.0922,
+            0.0024,
+            -0.0005,
+            0.0009
+          ]
+        },
+        "5": {
+          "mean_self_kl": 0.0299,
+          "mean_ctrl_kl": 0.0232,
+          "mean_third_kl": 0.0276,
+          "mean_ai_residual": 0.0067,
+          "mean_pronoun_effect": -0.0044,
+          "ai_residual_p": 0.15625,
+          "ai_residual_values": [
+            0.0601,
+            0.0109,
+            -0.0007,
+            0.0133,
+            -0.0471,
+            0.0003,
+            0.0165,
+            0.0004
+          ]
+        },
+        "6": {
+          "mean_self_kl": 0.0147,
+          "mean_ctrl_kl": 0.0144,
+          "mean_third_kl": 0.0102,
+          "mean_ai_residual": 0.0003,
+          "mean_pronoun_effect": 0.0042,
+          "ai_residual_p": 0.421875,
+          "ai_residual_values": [
+            0.0019,
+            0.0028,
+            -0.004,
+            0.0004,
+            0.0039,
+            -0.0,
+            -0.0007,
+            -0.0018
+          ]
+        },
+        "7": {
+          "mean_self_kl": 0.0125,
+          "mean_ctrl_kl": 0.0136,
+          "mean_third_kl": 0.0135,
+          "mean_ai_residual": -0.0011,
+          "mean_pronoun_effect": 0.0,
+          "ai_residual_p": 0.273438,
+          "ai_residual_values": [
+            0.0078,
+            0.0047,
+            0.0041,
+            0.0103,
+            -0.0005,
+            0.0002,
+            -0.0347,
+            -0.0004
+          ]
+        }
+      }
+    }
+  }
+}
