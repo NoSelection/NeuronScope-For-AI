@@ -199,6 +199,9 @@ results/**/*_executed.ipynb
 # Unpublished paper drafts
 results/*.pdf
 
+# Paper (LaTeX source, figures, compiled PDFs, arxiv submission)
+paper/
+
 # Frontend
 node_modules/
 frontend/dist/
