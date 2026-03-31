@@ -4,16 +4,15 @@ import type { ExperimentResult } from '../../api/types';
 import { Panel } from '../common/Panel';
 import { InfoTip } from '../common/InfoTip';
 import * as api from '../../api/client';
-import { useExperimentStore } from '../../stores/experimentStore';
 
 interface Props {
   results: ExperimentResult[];
+  sweepId: string | null;
 }
 
-export function SweepResults({ results }: Props) {
+export function SweepResults({ results, sweepId }: Props) {
   const svgRef = useRef<SVGSVGElement>(null);
   const [exporting, setExporting] = useState(false);
-  const config = useExperimentStore((s) => s.config);
 
   useEffect(() => {
     if (!svgRef.current || results.length === 0) return;
@@ -104,9 +103,11 @@ export function SweepResults({ results }: Props) {
   const changedCount = results.filter((r) => r.top_token_changed).length;
 
   const handleExportPDF = async () => {
+    if (!sweepId) return;
+
     setExporting(true);
     try {
-      await api.downloadSweepReport(config);
+      await api.downloadSweepReportById(sweepId);
     } catch (e) {
       console.error('PDF export failed:', e);
     } finally {
@@ -120,8 +121,9 @@ export function SweepResults({ results }: Props) {
       actions={
         <button
           onClick={handleExportPDF}
-          disabled={exporting}
+          disabled={exporting || !sweepId}
           className="rounded-lg border border-zinc-600 px-3 py-1 text-xs font-medium text-zinc-300 transition-colors hover:border-blue-500 hover:text-blue-400 disabled:opacity-40"
+          title={sweepId ? 'Export this sweep as a PDF report' : 'Sweep export is unavailable until the sweep is saved'}
         >
           {exporting ? 'Generating...' : 'Export PDF Report'}
         </button>

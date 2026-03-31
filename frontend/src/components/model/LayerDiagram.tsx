@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { useModelStore } from '../../stores/modelStore';
-import { useActivationStore } from '../../stores/activationStore';
 
 interface Props {
   selectedLayer?: number;

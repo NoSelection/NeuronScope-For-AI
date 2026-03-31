@@ -42,6 +42,7 @@ interface ExperimentState {
   config: ExperimentConfig;
   currentResult: ExperimentResult | null;
   sweepResults: ExperimentResult[];
+  currentSweepId: string | null;
   headSweepResults: ExperimentResult[];
   insights: Insight[];
   history: ExperimentSummary[];
@@ -72,6 +73,7 @@ export const useExperimentStore = create<ExperimentState>((set, get) => ({
   config: defaultConfig(),
   currentResult: null,
   sweepResults: [],
+  currentSweepId: null,
   headSweepResults: [],
   insights: [],
   history: [],
@@ -115,7 +117,14 @@ export const useExperimentStore = create<ExperimentState>((set, get) => ({
 
   runExperiment: async () => {
     const { config } = get();
-    set({ running: true, error: null, insights: [] });
+    set({
+      running: true,
+      error: null,
+      insights: [],
+      sweepResults: [],
+      currentSweepId: null,
+      headSweepResults: [],
+    });
     try {
       const { result, insights } = await api.runExperiment(config);
       set({ currentResult: result, insights, running: false });
@@ -126,10 +135,18 @@ export const useExperimentStore = create<ExperimentState>((set, get) => ({
 
   runSweep: async (layers) => {
     const { config } = get();
-    set({ running: true, error: null, sweepResults: [], insights: [] });
+    set({
+      running: true,
+      error: null,
+      currentResult: null,
+      sweepResults: [],
+      currentSweepId: null,
+      headSweepResults: [],
+      insights: [],
+    });
     try {
-      const { results, insights } = await api.runSweep(config, layers);
-      set({ sweepResults: results, insights, running: false });
+      const { results, insights, sweep_id } = await api.runSweep(config, layers);
+      set({ sweepResults: results, currentSweepId: sweep_id, insights, running: false });
       // Refresh sweep history in background
       get().loadSweepHistory();
     } catch (e) {
@@ -139,7 +156,15 @@ export const useExperimentStore = create<ExperimentState>((set, get) => ({
 
   runHeadSweep: async (layer, heads) => {
     const { config } = get();
-    set({ running: true, error: null, headSweepResults: [], insights: [] });
+    set({
+      running: true,
+      error: null,
+      currentResult: null,
+      sweepResults: [],
+      currentSweepId: null,
+      headSweepResults: [],
+      insights: [],
+    });
     try {
       const { results, insights } = await api.runHeadSweep(config, layer, heads);
       set({ headSweepResults: results, insights, running: false });
@@ -161,7 +186,13 @@ export const useExperimentStore = create<ExperimentState>((set, get) => ({
   selectResult: async (id) => {
     try {
       const result = await api.getExperiment(id);
-      set({ currentResult: result, insights: [] });
+      set({
+        currentResult: result,
+        sweepResults: [],
+        currentSweepId: null,
+        headSweepResults: [],
+        insights: [],
+      });
     } catch (e) {
       set({ error: (e as Error).message });
     }

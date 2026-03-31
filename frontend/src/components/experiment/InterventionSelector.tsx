@@ -7,17 +7,6 @@ import type { EducationKey } from '../../education/content';
 const COMPONENTS = Object.entries(COMPONENT_LABELS) as [ComponentType, string][];
 const INTERVENTION_TYPES = Object.entries(INTERVENTION_LABELS) as [InterventionType, string][];
 
-const COMPONENT_TOPIC_MAP: Record<ComponentType, EducationKey> = {
-  embedding: 'component_embedding',
-  residual_pre: 'component_residual_pre',
-  residual_post: 'component_residual_post',
-  attn_output: 'component_attn_output',
-  attn_pattern: 'component_attn_pattern',
-  mlp_gate: 'component_mlp_gate',
-  mlp_output: 'component_mlp_output',
-  final_logits: 'component_final_logits',
-};
-
 const INTERVENTION_TOPIC_MAP: Record<InterventionType, EducationKey> = {
   zero: 'intervention_zero',
   mean: 'intervention_mean',
@@ -100,9 +89,7 @@ export function InterventionSelector({ numLayers, numHeads }: Props) {
 
             {/* Intervention Type */}
             <div>
-              <InfoLabel topic={INTERVENTION_TOPIC_MAP[intervention.intervention_type]}>
-                Type
-              </InfoLabel>
+              <InfoLabel topic={INTERVENTION_TOPIC_MAP[intervention.intervention_type]}>Type</InfoLabel>
               <select
                 value={intervention.intervention_type}
                 onChange={(e) =>

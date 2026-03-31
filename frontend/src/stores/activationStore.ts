@@ -20,7 +20,7 @@ interface ActivationState {
   clear: () => void;
 }
 
-export const useActivationStore = create<ActivationState>((set, get) => ({
+export const useActivationStore = create<ActivationState>((set) => ({
   captures: [],
   loading: false,
   streaming: false,

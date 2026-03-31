@@ -8,7 +8,7 @@ import { InsightsPanel } from '../components/experiment/InsightsPanel';
 import { ExperimentHistory } from '../components/experiment/ExperimentHistory';
 
 export function ExperimentWorkbench() {
-  const { currentResult, sweepResults, headSweepResults, insights } = useExperimentStore();
+  const { currentResult, sweepResults, currentSweepId, headSweepResults, insights } = useExperimentStore();
 
   const hasResults = currentResult || sweepResults.length > 0 || headSweepResults.length > 0;
 
@@ -25,7 +25,7 @@ export function ExperimentWorkbench() {
       <div className="space-y-5 lg:col-span-7" data-tour="results-area">
         {insights.length > 0 && <InsightsPanel insights={insights} />}
         {currentResult && <ResultsPanel result={currentResult} />}
-        {sweepResults.length > 0 && <SweepResults results={sweepResults} />}
+        {sweepResults.length > 0 && <SweepResults results={sweepResults} sweepId={currentSweepId} />}
         {headSweepResults.length > 0 && <HeadSweepResults results={headSweepResults} />}
         {!hasResults && (
           <div className="flex h-64 items-center justify-center rounded-xl border border-dashed border-zinc-700/50 text-zinc-500">

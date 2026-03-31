@@ -23,7 +23,11 @@ export function ComparisonView() {
   }, [loadHistory]);
 
   useEffect(() => {
-    if (!leftId) { setLeftResult(null); return; }
+    if (!leftId) {
+      setLeftResult(null);
+      return;
+    }
+
     setLoading(true);
     api.getExperiment(leftId)
       .then((r) => setLeftResult(r))
@@ -32,7 +36,11 @@ export function ComparisonView() {
   }, [leftId]);
 
   useEffect(() => {
-    if (!rightId) { setRightResult(null); return; }
+    if (!rightId) {
+      setRightResult(null);
+      return;
+    }
+
     setLoading(true);
     api.getExperiment(rightId)
       .then((r) => setRightResult(r))
@@ -60,7 +68,7 @@ export function ComparisonView() {
                 <option value="">Select experiment...</option>
                 {history.map((h) => (
                   <option key={h.id} value={h.id}>
-                    {h.name || h.id.slice(0, 8)} — {h.clean_token} → {h.intervention_token}
+                    {`${h.name || h.id.slice(0, 8)} - ${h.clean_token} -> ${h.intervention_token}`}
                   </option>
                 ))}
               </select>
@@ -75,7 +83,7 @@ export function ComparisonView() {
                 <option value="">Select experiment...</option>
                 {history.map((h) => (
                   <option key={h.id} value={h.id}>
-                    {h.name || h.id.slice(0, 8)} — {h.clean_token} → {h.intervention_token}
+                    {`${h.name || h.id.slice(0, 8)} - ${h.clean_token} -> ${h.intervention_token}`}
                   </option>
                 ))}
               </select>
@@ -100,7 +108,6 @@ export function ComparisonView() {
 
       {leftResult && rightResult && (
         <>
-          {/* Metric Comparison */}
           <Panel title="Metric Comparison">
             <div className="space-y-3">
               <MetricRow
@@ -144,7 +151,6 @@ export function ComparisonView() {
             </div>
           </Panel>
 
-          {/* Config Diff */}
           <Panel title="Config Differences">
             <div className="space-y-2 text-sm">
               <ConfigDiffRow
@@ -159,49 +165,47 @@ export function ComparisonView() {
               />
               <ConfigDiffRow
                 label="Layer"
-                left={String(leftResult.config.interventions[0]?.target_layer ?? '—')}
-                right={String(rightResult.config.interventions[0]?.target_layer ?? '—')}
+                left={String(leftResult.config.interventions[0]?.target_layer ?? '-')}
+                right={String(rightResult.config.interventions[0]?.target_layer ?? '-')}
               />
               <ConfigDiffRow
                 label="Component"
-                left={leftResult.config.interventions[0]?.target_component ?? '—'}
-                right={rightResult.config.interventions[0]?.target_component ?? '—'}
+                left={leftResult.config.interventions[0]?.target_component ?? '-'}
+                right={rightResult.config.interventions[0]?.target_component ?? '-'}
               />
               <ConfigDiffRow
                 label="Intervention"
-                left={leftResult.config.interventions[0]?.intervention_type ?? '—'}
-                right={rightResult.config.interventions[0]?.intervention_type ?? '—'}
+                left={leftResult.config.interventions[0]?.intervention_type ?? '-'}
+                right={rightResult.config.interventions[0]?.intervention_type ?? '-'}
               />
             </div>
           </Panel>
 
-          {/* Top-K Side by Side */}
           <Panel title="Top-K Predictions">
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <h3 className="mb-2 text-xs uppercase tracking-wider text-zinc-400">
-                  Experiment A — Clean
+                  Experiment A - Clean
                 </h3>
                 <TopKTable predictions={leftResult.clean_top_k} />
                 <h3 className="mb-2 mt-4 text-xs uppercase tracking-wider text-zinc-400">
-                  Experiment A — Intervention
+                  Experiment A - Intervention
                 </h3>
                 <TopKTable predictions={leftResult.intervention_top_k} />
               </div>
               <div>
                 <h3 className="mb-2 text-xs uppercase tracking-wider text-zinc-400">
-                  Experiment B — Clean
+                  Experiment B - Clean
                 </h3>
                 <TopKTable predictions={rightResult.clean_top_k} />
                 <h3 className="mb-2 mt-4 text-xs uppercase tracking-wider text-zinc-400">
-                  Experiment B — Intervention
+                  Experiment B - Intervention
                 </h3>
                 <TopKTable predictions={rightResult.intervention_top_k} />
               </div>
             </div>
           </Panel>
 
-          {/* Activation Diff */}
           <Panel title="Activation Difference">
             <p className="mb-3 text-xs text-zinc-400">
               Capture activations from both experiments at the intervention layer to visualize element-wise differences.

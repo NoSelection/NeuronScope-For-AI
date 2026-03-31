@@ -26,9 +26,12 @@ export function WalkthroughOverlay() {
         setRect(el.getBoundingClientRect());
       }, 300);
       return () => clearTimeout(timer);
-    } else {
-      setRect(null);
     }
+
+    const frame = requestAnimationFrame(() => {
+      setRect(null);
+    });
+    return () => cancelAnimationFrame(frame);
   }, [active, step, stepIndex]);
 
   // Recalculate on scroll/resize
