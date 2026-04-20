@@ -12,8 +12,10 @@ def kl_divergence(clean_logits: torch.Tensor, intervention_logits: torch.Tensor)
     Measures how much the intervention changed the output distribution.
     Higher values = larger causal effect.
     """
-    p = F.softmax(clean_logits.float(), dim=-1)
-    log_q = F.log_softmax(intervention_logits.float(), dim=-1)
+    clean_last = clean_logits[:, -1, :].float()
+    intervention_last = intervention_logits[:, -1, :].float()
+    p = F.softmax(clean_last, dim=-1)
+    log_q = F.log_softmax(intervention_last, dim=-1)
     return F.kl_div(log_q, p, reduction="batchmean", log_target=False).item()
 
 

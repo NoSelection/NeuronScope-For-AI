@@ -29,7 +29,7 @@ from neuronscope.experiments.comparator import (
 )
 from neuronscope.experiments.reproducibility import set_all_seeds
 
-console = Console()
+console = Console(legacy_windows=False)
 
 # Global lock — one experiment at a time on GPU
 _gpu_lock = threading.Lock()

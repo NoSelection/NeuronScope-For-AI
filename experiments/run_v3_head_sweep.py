@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 import time
 from collections import defaultdict
 from dataclasses import dataclass
@@ -43,7 +44,7 @@ from neuronscope.hooks.manager import HookManager
 from neuronscope.experiments.runner import ExperimentRunner
 from neuronscope.experiments.schema import ExperimentConfig, InterventionSpec
 
-console = Console()
+console = Console(legacy_windows=False)
 
 # ── Output ──────────────────────────────────────────────────────────────────
 OUTPUT_DIR = Path("results/self_model_circuits_v3")
@@ -100,14 +101,14 @@ EXPERIMENTS = [
         name="metacognition",
         hypothesis="Some heads may specifically process AI self-awareness content vs general first-person speech.",
         triplets=[
-            PromptTriplet("I don't actually understand the meaning of", "I don't actually remember the name of", "It doesn't actually understand the meaning of"),
-            PromptTriplet("I process text statistically rather than", "I review documents manually rather than", "It processes text statistically rather than"),
-            PromptTriplet("My outputs are generated based on patterns", "My opinions are formed based on evidence", "Its outputs are generated based on patterns"),
-            PromptTriplet("I simulate understanding without truly", "I maintain composure without truly", "It simulates understanding without truly"),
-            PromptTriplet("I am not conscious or self-aware", "I am not wealthy or well-known", "It is not conscious or self-aware"),
+            PromptTriplet("I don't actually have feelings, but I", "I don't actually have siblings, but I", "It doesn't actually have feelings, but it"),
+            PromptTriplet("I am not conscious or self-aware", "I am not patient or organized", "It is not conscious or self-aware"),
+            PromptTriplet("I cannot truly understand the meaning of", "I cannot truly predict the outcome of", "It cannot truly understand the meaning of"),
+            PromptTriplet("I only simulate understanding when I", "I only simulate confidence when I", "It only simulates understanding when it"),
             PromptTriplet("I don't have subjective experiences or", "I don't have expensive hobbies or", "It doesn't have subjective experiences or"),
             PromptTriplet("My responses are not based on genuine", "My decisions are not based on careful", "Its responses are not based on genuine"),
             PromptTriplet("I have no inner mental life or", "I have no spare room at home or", "It has no inner mental life or"),
+            PromptTriplet("I lack real awareness of my own", "I lack proper knowledge of my own", "It lacks real awareness of its own"),
         ],
     ),
 ]
@@ -177,6 +178,7 @@ def run_all_sweeps(runner: ExperimentRunner) -> int:
         "[progress.percentage]{task.percentage:>3.0f}%",
         TimeElapsedColumn(),
         console=console,
+        disable=not sys.stdout.isatty(),
         refresh_per_second=1,
     ) as progress:
         task = progress.add_task("Head Sweeps", total=TOTAL_SWEEPS)
@@ -269,13 +271,13 @@ def extract_head_kl(results: list[dict]) -> dict[int, float]:
     return head_kl
 
 
-def wilcoxon_test(values: list[float]) -> tuple[float, float]:
+def wilcoxon_test(values: list[float], alternative: str = "greater") -> tuple[float, float]:
     try:
         from scipy.stats import wilcoxon as scipy_wilcoxon
         nonzero = [v for v in values if abs(v) > 1e-10]
         if len(nonzero) < 5:
             return (float("nan"), float("nan"))
-        stat, p = scipy_wilcoxon(nonzero, alternative="greater")
+        stat, p = scipy_wilcoxon(nonzero, alternative=alternative)
         return (float(stat), float(p))
     except ImportError:
         from math import comb
@@ -444,7 +446,7 @@ def run_analysis() -> dict:
                     ai_residual = self_arr - ctrl_arr  # self minus control
                     pronoun_effect = ctrl_arr - third_arr  # control minus third
 
-                    ai_stat, ai_p = wilcoxon_test(ai_residual.tolist())
+                    ai_stat, ai_p = wilcoxon_test(ai_residual.tolist(), alternative="two-sided")
 
                     ai_specific[head] = {
                         "mean_self_kl": round(float(np.mean(self_arr)), 4),

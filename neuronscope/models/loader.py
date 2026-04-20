@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 import torch
+import warnings
 from pathlib import Path
 from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 from rich.console import Console
 
 from neuronscope.models.schema import ModelInfo
 
-console = Console()
+console = Console(legacy_windows=False)
 
 
 class ModelLoader:
@@ -34,12 +35,29 @@ class ModelLoader:
 
         config = AutoConfig.from_pretrained(path)
 
-        model = AutoModelForCausalLM.from_pretrained(
-            path,
-            torch_dtype=torch.bfloat16,
-            device_map=device if device == "auto" else {"": device},
-            low_cpu_mem_usage=True,
-        )
+        model_kwargs = {
+            "device_map": device if device == "auto" else {"": device},
+            "low_cpu_mem_usage": True,
+        }
+
+        # Newer transformers builds have renamed torch_dtype -> dtype.
+        # We prefer the new argument but fall back to the old one for compatibility.
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", FutureWarning)
+            try:
+                model = AutoModelForCausalLM.from_pretrained(
+                    path,
+                    dtype=torch.bfloat16,
+                    **model_kwargs,
+                )
+            except TypeError as exc:
+                if "dtype" not in str(exc):
+                    raise
+                model = AutoModelForCausalLM.from_pretrained(
+                    path,
+                    torch_dtype=torch.bfloat16,
+                    **model_kwargs,
+                )
         model.eval()
 
         tokenizer = AutoTokenizer.from_pretrained(path)

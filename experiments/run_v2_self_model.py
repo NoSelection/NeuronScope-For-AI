@@ -42,7 +42,7 @@ from neuronscope.hooks.manager import HookManager
 from neuronscope.experiments.runner import ExperimentRunner
 from neuronscope.experiments.schema import ExperimentConfig, InterventionSpec
 
-console = Console()
+console = Console(legacy_windows=False)
 
 # ── Output ──────────────────────────────────────────────────────────────────
 OUTPUT_DIR = Path("results/self_model_circuits_v2")
@@ -367,6 +367,7 @@ def run_all_sweeps(runner: ExperimentRunner) -> int:
         "[progress.percentage]{task.percentage:>3.0f}%",
         TimeElapsedColumn(),
         console=console,
+        disable=not sys.stdout.isatty(),
         refresh_per_second=1,
     ) as progress:
         task = progress.add_task("Sweeps", total=TOTAL_SWEEPS)
@@ -664,7 +665,9 @@ def run_analysis(num_layers: int = 34) -> dict:
                     [
                         (L, s)
                         for L, s in layer_stats.items()
-                        if s.get("significant_fdr_05", False) and s["mean_differential_kl"] > 0
+                        if s.get("significant_fdr_05", False)
+                        and s["mean_differential_kl"] > 0
+                        and s["bootstrap_ci_95"][0] > 0
                     ],
                     key=lambda x: x[1]["mean_differential_kl"],
                     reverse=True,

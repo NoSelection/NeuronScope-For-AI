@@ -202,6 +202,18 @@ results/*.pdf
 # Paper (LaTeX source, figures, compiled PDFs, arxiv submission)
 paper/
 
+# Local audit / scratch artifacts
+.codex_backup/
+.codex_tmp_pages*.txt
+.tmp_pdftext/
+auditing it/
+tmp/
+issues.md
+
+# Local rerun archives and logs
+results/_pre_erratum_archives/
+results/_rerun_logs/
+
 # Frontend
 node_modules/
 frontend/dist/
