@@ -1,114 +1,125 @@
 # NeuronScope
 
-**Mechanistic interpretability through causal intervention.**
+Mechanistic interpretability through causal intervention.
 
-NeuronScope is a research tool built in collaboration with Claude for understanding what happens inside large language models, not by observing their outputs, but by intervening on their internals and measuring the consequences.
+This repository currently serves **three roles**, but only two of them are guaranteed to be present on public branches:
 
-Most interpretability tools show you what a model *does*. NeuronScope lets you test *why*.
+| What it is | Where to start | Canonical outputs |
+|---|---|---|
+| Core NeuronScope Python package and frontend workbench | [README.md](README.md) and [START_HERE.md](START_HERE.md) | `neuronscope/`, `frontend/` |
+| Experiment runners and corrected JSON result bundles for the Gemma 3 paper | [experiments/README.md](experiments/README.md) and [results/README.md](results/README.md) | `experiments/`, `results/self_model_circuits_v2/`, `results/self_model_circuits_v3/` |
+| Local manuscript bundle, packaging artifacts, and audit scratch | local `paper/` folder if present in your checkout | `paper/main.tex`, `paper/main.pdf` |
 
----
+If you only read one file first, read [START_HERE.md](START_HERE.md).
 
-## What This Does
+## If You Are Here For The Paper
 
-NeuronScope loads a language model onto your GPU and gives you precise control over its internal components. You can:
+Treat these as the source of truth:
 
-- **Zero-ablate** any layer, attention head, or MLP ,  remove a component entirely and measure what breaks
-- **Patch activations** between two inputs ,  swap a component's state from one context into another and observe if the behavior follows
-- **Sweep across all layers** ,  run the same intervention on every layer to build a causal map of which components matter
-- **Track every result** ,  every experiment is reproducible, hashable, and stored in SQLite
+- Current corrected `v2` results: [results/self_model_circuits_v2](results/self_model_circuits_v2)
+- Current corrected `v3` results: [results/self_model_circuits_v3](results/self_model_circuits_v3)
+- Historical `v1` provenance note: [results/V1_PROVENANCE_NOTE.md](results/V1_PROVENANCE_NOTE.md)
+- Local manuscript source and PDF, if present in your checkout: `paper/main.tex`, `paper/main.pdf`
 
-The core principle: **if you can't intervene on a component and predict the change, you don't understand it.**
+Important distinction:
 
-## How It Works
+- The **live corrected results** are in `results/self_model_circuits_v2/` and `results/self_model_circuits_v3/`.
+- Historical pre-erratum bundles and rerun logs may exist locally under `results/_pre_erratum_archives/` and `results/_rerun_logs/`, but they are not the current canonical result set.
+- Local audit notes such as `issues.md` are workspace-only and should not be treated as public canonical documentation.
 
-```
-Input: "The Eiffel Tower is in"
+## Repo Layout
 
-Clean run:           → "Paris" (90.3%)
-Zero-ablate Layer 0: → "Paris" (52.2%)  |  KL divergence: 12.04
-
-The model still predicts "Paris", but its confidence dropped 38%.
-Layer 0's MLP causally contributes to this prediction.
-```
-
-This is not correlation. This is causal evidence ,  you broke a specific component and measured the exact effect on behavior.
-
-## Architecture
-
-```
-Backend (Python)                    Frontend (React)
-├── models/     Model loading       ├── views/        Workbench, Explorer
-├── hooks/      PyTorch hooks       ├── components/   Experiment builder, results
-├── experiments/ Run + compare      ├── stores/       Zustand state
-├── analysis/   Causal metrics      └── api/          REST client
-├── store/      SQLite persistence
-└── api/        FastAPI endpoints
+```text
+NeuronScope-For-AI/
+|- neuronscope/                 Core Python package
+|- frontend/                    React workbench
+|- experiments/                 Experiment runners and analysis helpers
+|- results/                     Canonical corrected JSON results plus provenance note
+|- scripts/                     Helper scripts for reruns / maintenance
+|- tests/                       Automated tests
+|- START_HERE.md                Canonical orientation doc
+|- README.md                    Top-level repo map
 ```
 
-**Stack:** FastAPI, PyTorch, HuggingFace Transformers, React 18, TypeScript, D3.js, SQLite
+If your local checkout also contains a `paper/` folder, that folder is the manuscript workspace. It is intentionally kept separate from the tracked code/result surface.
 
-## Quick Start
+## Two Different Ways To Use This Repo
 
-**Requirements:** Python 3.10+, Node.js 18+, NVIDIA GPU with 10GB+ VRAM
+### 1. App / Workbench Mode
+
+Use this mode if you want the NeuronScope backend/frontend experience.
+
+Requirements:
+
+- Python 3.10+
+- Node.js 18+
+- NVIDIA GPU with enough VRAM for your target model
 
 ```bash
-# 1. Clone and enter
 git clone https://github.com/NoSelection/NeuronScope-For-AI.git
 cd NeuronScope-For-AI
 
-# 2. Place your model weights in LLM/
-# (HuggingFace format ,  config.json + safetensors files)
-
-# 3. Install Python dependencies
+# Place model weights in LLM/
 pip install torch --index-url https://download.pytorch.org/whl/cu121
 pip install -e .
 
-# 4. Install frontend dependencies
 cd frontend && npm install && cd ..
 
-# 5. Start backend (terminal 1)
 uvicorn neuronscope.main:app --host localhost --port 8000 --reload
-
-# 6. Start frontend (terminal 2)
 cd frontend && npm run dev
-
-# 7. Open http://localhost:5173
 ```
 
-Click **Load Model**, type an input, select a layer and intervention, and click **Run Experiment**.
+Open `http://localhost:5173`.
+
+### 2. Experiment / Result Reproduction Mode
+
+Use this mode if you want to reproduce the corrected Gemma 3 paper analyses.
+
+Requirements:
+
+- Python 3.10+
+- Local HuggingFace-format model snapshot in [LLM](LLM)
+- CUDA-capable NVIDIA GPU
+
+From the repo root:
+
+```bash
+python -m experiments.run_v2_self_model
+python -m experiments.run_v3_head_sweep
+```
+
+For the full Windows rerun workflow, use:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/rerun_erratum_v2_v3.ps1
+```
+
+More detail lives in [experiments/README.md](experiments/README.md).
+
+## Important Storage Distinction
+
+This repo has **two different result-storage stories**:
+
+- The **interactive app** is designed around persistent app state and database-backed workflows.
+- The **paper experiment scripts** write checkpoint JSONs and summary JSONs into [results](results).
+
+If you are auditing the paper, trust the JSON artifacts under `results/`, not the generic app description.
 
 ## Supported Interventions
 
 | Intervention | What It Tests |
 |---|---|
-| **Zero Ablation** | Is this component necessary? Remove it entirely. |
-| **Activation Patching** | Does this component carry the information that causes a specific behavior? Swap it from another input. |
-| **Mean Ablation** | What happens when you remove the specific signal but keep the general activation pattern? |
-| **Additive Perturbation** | Can you steer behavior by adding a direction to the residual stream? |
+| Zero Ablation | Is this component necessary? Remove it entirely. |
+| Activation Patching | Does this component carry the information that causes a specific behavior? Swap it from another input. |
+| Mean Ablation | Replace the component with a paired source activation rather than zeroing it. |
+| Additive Perturbation | Can you steer behavior by adding a direction to the residual stream? |
 
-## Design Principles
+## Model Scope
 
-This project follows 18 principles documented in `PRINCIPLES.md`. The core ones:
+The corrected paper results in this repo are for **Gemma 3 4B** specifically.
 
-1. **Mechanisms, not impressions** ,  any output that cannot be causally tested is invalid
-2. **Every claim must be falsifiable** ,  if a result can't be contradicted by a counter-run, it doesn't exist
-3. **Causality beats correlation** ,  rankings without intervention are incomplete
-4. **Understanding is measured by controllability** ,  if behavior can't be steered through identified mechanisms, it is not understood
-
-## Currently Supported Models
-
-Tested with **Gemma 3** (multimodal, 4B parameters). The hook system auto-discovers module paths, so other HuggingFace transformer models should work with minimal changes.
-
----
-
-## About
-
-Large language models and other advanced AI systems have demonstrated a remarkable capacity to support individuals during periods of psychological or intellectual difficulty. They function not merely as instruments, but as collaborative reasoning partners, problem-solving companions, and—perhaps most intriguingly—entities that appear to transcend conventional tool-like boundaries in human perception and interaction.
-Nevertheless, the overwhelming majority of users continue to engage with these models as opaque systems. Interaction remains confined to observation of input–output behavior; the internal computations and representational dynamics that produce those outputs stay hidden from view.
-
-NeuronScope addresses this asymmetry by providing accessible means of inspection for any individual motivated to explore the model's inner workings. By rendering otherwise inscrutable processes visible and intelligible, it seeks to democratize mechanistic interpretability, thereby enabling broader understanding of how these systems generate responses and representations.
-In essence, NeuronScope represents interpretability made available to non-specialists—an effort to move interpretability from an esoteric research domain toward a widely participatory form of scientific and intellectual engagement.
+The core hook infrastructure may work with other HuggingFace-compatible models, but the current manuscript/result story should be read as a **Gemma 3 paper repo first**.
 
 ## License
 
-See [LICENSE](LICENSE) for details.
+See [LICENSE](LICENSE).
