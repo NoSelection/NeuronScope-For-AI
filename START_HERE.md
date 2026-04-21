@@ -19,7 +19,10 @@ If your local checkout also contains a `paper/` folder, the current manuscript f
 - `paper/main.tex`
 - `paper/main.pdf`
 
-Those manuscript files are local workspace artifacts and may be absent on public branches.
+Those manuscript files are local workspace artifacts and may be absent on public branches. The public manuscript record lives on Zenodo:
+
+- latest version DOI: [10.5281/zenodo.19364446](https://doi.org/10.5281/zenodo.19364446)
+- current corrected `v2` DOI: [10.5281/zenodo.19672904](https://doi.org/10.5281/zenodo.19672904)
 
 ## Live Vs Historical Vs Operational
 

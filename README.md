@@ -16,6 +16,8 @@ If you only read one file first, read [START_HERE.md](START_HERE.md).
 
 Treat these as the source of truth:
 
+- Public manuscript record on Zenodo (latest version DOI): [10.5281/zenodo.19364446](https://doi.org/10.5281/zenodo.19364446)
+- Current corrected manuscript version on Zenodo (`v2`): [10.5281/zenodo.19672904](https://doi.org/10.5281/zenodo.19672904)
 - Current corrected `v2` results: [results/self_model_circuits_v2](results/self_model_circuits_v2)
 - Current corrected `v3` results: [results/self_model_circuits_v3](results/self_model_circuits_v3)
 - Historical `v1` provenance note: [results/V1_PROVENANCE_NOTE.md](results/V1_PROVENANCE_NOTE.md)
@@ -41,7 +43,7 @@ NeuronScope-For-AI/
 |- README.md                    Top-level repo map
 ```
 
-If your local checkout also contains a `paper/` folder, that folder is the manuscript workspace. It is intentionally kept separate from the tracked code/result surface.
+If your local checkout also contains a `paper/` folder, that folder is the manuscript workspace. The public repository intentionally tracks the code and corrected result bundles, while the public manuscript PDF lives on Zenodo.
 
 ## Two Different Ways To Use This Repo
 
@@ -116,9 +118,9 @@ If you are auditing the paper, trust the JSON artifacts under `results/`, not th
 
 ## Model Scope
 
-The corrected paper results in this repo are for **Gemma 3 4B** specifically.
+The corrected result bundles in this repo are for **Gemma 3 4B** specifically.
 
-The core hook infrastructure may work with other HuggingFace-compatible models, but the current manuscript/result story should be read as a **Gemma 3 paper repo first**.
+The core hook infrastructure may work with other HuggingFace-compatible models, but the current manuscript/result story should be read as a **Gemma 3 paper repo first**. The public manuscript PDF is hosted on Zenodo rather than committed to this repository.
 
 ## License
 

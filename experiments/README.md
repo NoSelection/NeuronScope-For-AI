@@ -7,6 +7,7 @@ This folder is the experiment layer of the repo. If you are looking for:
 - current result bundles, see [results/README.md](../results/README.md)
 - historical `v1` status, see [results/V1_PROVENANCE_NOTE.md](../results/V1_PROVENANCE_NOTE.md)
 - overall repo orientation, see [START_HERE.md](../START_HERE.md)
+- the public manuscript PDF, use the Zenodo record: [10.5281/zenodo.19364446](https://doi.org/10.5281/zenodo.19364446)
 - a local manuscript bundle, use the local `paper/` folder if it exists in your checkout
 
 ## Canonical Current Outputs
